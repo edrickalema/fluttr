@@ -10,6 +10,11 @@ import {
   MessageCircle,
   Palette,
   Sparkles,
+  User,
+  Info,
+  HelpCircle,
+  Shield,
+  Trash,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,14 +24,20 @@ import {
   Switch,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 
-import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  SlideInRight,
+  FadeInDown,
+} from "react-native-reanimated";
 // import { getSelectedTone } from "@/utils/storage";
 import Text from "@/components/main/custom-text";
 import { useAssistant } from "@/context/AssitantContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "expo-router";
+
 interface SettingItemProps {
   icon: React.ReactNode;
   title: string;
@@ -36,15 +47,14 @@ interface SettingItemProps {
   value?: boolean;
   onToggle?: () => void;
   onPress?: () => void;
+  delay?: number;
 }
 
 export default function SettingsScreen() {
   const { theme } = useTheme();
-  // Router
   const router = useRouter();
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
-
   const { isAssistantEnabled, toggleAssistantEnabled } = useAssistant();
 
   // Feature toggles
@@ -55,7 +65,6 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     async function loadTone() {
-      //
       // const tone = await getSelectedTone();
       // setSelectedTone(tone);
     }
@@ -78,58 +87,125 @@ export default function SettingsScreen() {
     value = false,
     onToggle,
     onPress,
+    delay = 0,
   }: SettingItemProps) => (
-    <TouchableOpacity
-      style={styles.settingItem}
-      onPress={onPress}
-      disabled={isToggle}
-    >
-      <View style={styles.settingIcon}>{icon}</View>
-      <View style={styles.settingContent}>
-        <View style={styles.settingHeader}>
-          <Text style={styles.settingTitle} variant='subheading'>
-            {title}
-          </Text>
-          {isPro && renderProBadge()}
+    <Animated.View entering={FadeInDown.delay(delay).duration(300)}>
+      <TouchableOpacity
+        style={[
+          styles.settingItem,
+          {
+            backgroundColor:
+              theme === "dark" ? '' : Colors.white,
+          },
+        ]}
+        onPress={onPress}
+        disabled={isToggle}
+      >
+        <View
+          style={[
+            styles.settingIcon,
+            {
+              backgroundColor:
+                theme === "dark" ? '': Colors.cream,
+            },
+          ]}
+        >
+          {icon}
         </View>
-        {subtitle && (
-          <Text style={styles.settingSubtitle} variant='body'>
-            {subtitle}
-          </Text>
+        <View style={styles.settingContent}>
+          <View style={styles.settingHeader}>
+            <Text
+              style={[
+                styles.settingTitle,
+                {
+                  color: theme === "dark" ? Colors.lightText : Colors.darkText,
+                },
+              ]}
+              variant='subheading'
+            >
+              {title}
+            </Text>
+            {isPro && renderProBadge()}
+          </View>
+          {subtitle && (
+            <Text
+              style={[
+                styles.settingSubtitle,
+                {
+                  color:
+                    theme === "dark" ? Colors.mediumText : Colors.mediumText,
+                },
+              ]}
+              variant='body'
+            >
+              {subtitle}
+            </Text>
+          )}
+        </View>
+        {isToggle ? (
+          <Switch
+            value={value}
+            onValueChange={onToggle}
+            trackColor={{ false: "#D1D1D1", true: Colors.pink }}
+            thumbColor={Colors.lightText}
+            style={styles.toggle}
+          />
+        ) : (
+          <ChevronRight
+            size={18}
+            color={theme === "dark" ? Colors.mediumText : Colors.darkText}
+          />
         )}
-      </View>
-      {isToggle ? (
-        <Switch
-          value={value}
-          onValueChange={onToggle}
-          trackColor={{ false: "#D1D1D1", true: Colors.pink }}
-          thumbColor={Colors.lightText}
-        />
-      ) : (
-        <ChevronRight size={20} color={Colors.darkText} />
-      )}
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            theme === "dark" ? Colors.darkBackground : Colors.cream,
+        },
+      ]}
+    >
       <LinearGradient
         colors={[Colors.gradientPinkStart, "transparent"]}
         style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
       />
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
       >
-        <Animated.View entering={FadeIn.duration(500)} style={styles.header}>
-          <Text variant='heading' style={styles.headerTitle}>
-            Settings
-          </Text>
-          <Text variant='body' style={styles.headerSubtitle}>
-            Customize your romantic experience
-          </Text>
-        </Animated.View>
+        <View style={styles.userSection}>
+          <Animated.View
+            entering={FadeIn.duration(500)}
+            style={styles.profileContainer}
+          >
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={{ uri: "https://via.placeholder.com/150" }}
+                style={styles.profileImage}
+              />
+              <View style={styles.editProfileBadge}>
+                <User size={14} color={Colors.lightText} />
+              </View>
+            </View>
+            <View style={styles.profileInfo}>
+              <Text variant='heading' style={styles.profileName}>
+                Jessica
+              </Text>
+              <Text variant='body' style={styles.profileEmail}>
+                jessica@example.com
+              </Text>
+            </View>
+          </Animated.View>
+        </View>
 
         {!isPro && (
           <Animated.View
@@ -143,17 +219,21 @@ export default function SettingsScreen() {
               style={styles.proGradient}
             >
               <View style={styles.proContent}>
-                <Crown size={24} color={Colors.lightText} />
-                <Text variant='subheading' style={styles.proTitle}>
-                  Upgrade to Pro
-                </Text>
-                <Text variant='body' style={styles.proDescription}>
-                  Get access to advanced AI features and exclusive flirting
-                  styles
-                </Text>
+                <View style={styles.proIconContainer}>
+                  <Crown size={28} color={Colors.lightText} />
+                </View>
+                <View style={styles.proTextContainer}>
+                  <Text variant='subheading' style={styles.proTitle}>
+                    Upgrade to Pro
+                  </Text>
+                  <Text variant='body' style={styles.proDescription}>
+                    Get access to advanced AI features and exclusive flirting
+                    styles
+                  </Text>
+                </View>
                 <TouchableOpacity style={styles.proButton}>
                   <Text variant='button' style={styles.proButtonText}>
-                    Upgrade Now
+                    Upgrade
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -162,39 +242,55 @@ export default function SettingsScreen() {
         )}
 
         <View style={styles.section}>
-          <Text variant='heading' style={styles.sectionTitle}>
+          <Text
+            variant='heading'
+            style={[
+              styles.sectionTitle,
+              { color: theme === "dark" ? Colors.lightText : Colors.darkText },
+            ]}
+          >
             Smart Features
           </Text>
           {renderSettingItem({
-            icon: <Sparkles size={24} color={Colors.pink} />,
+            icon: <Sparkles size={22} color={Colors.pink} />,
             title: "Romantic Assistant",
             subtitle: "Get real-time flirting suggestions",
             isToggle: true,
             value: smartAssistant,
             onToggle: () => setSmartAssistant((prev) => !prev),
+            delay: 100,
           })}
           {renderSettingItem({
-            icon: <MessageCircle size={24} color={Colors.shyBlue} />,
+            icon: <MessageCircle size={22} color={Colors.shyBlue} />,
             title: "Floating Bubbles",
             subtitle: "Show AI cues on top of chat apps",
             isToggle: true,
             value: floatingBubble,
             onToggle: () => setFloatingBubble((prev) => !prev),
+            delay: 150,
           })}
           {renderSettingItem({
-            icon: <Bell size={24} color={Colors.wittyGreen} />,
+            icon: <Bell size={22} color={Colors.wittyGreen} />,
             title: "Notifications",
             subtitle: "Get timely romantic suggestions",
             isToggle: true,
             value: notifications,
             onToggle: () => setNotifications((prev) => !prev),
+            delay: 200,
           })}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferences</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme === "dark" ? Colors.lightText : Colors.darkText },
+            ]}
+          >
+            Personalization
+          </Text>
           {renderSettingItem({
-            icon: <Heart size={24} color={Colors.flirtyPink} />,
+            icon: <Heart size={22} color={Colors.flirtyPink} />,
             title: "Conversation Style",
             subtitle: selectedTone
               ? selectedTone.charAt(0).toUpperCase() + selectedTone.slice(1)
@@ -202,39 +298,20 @@ export default function SettingsScreen() {
             onPress: () => {
               router.push("/conversation-style");
             },
+            delay: 250,
           })}
           {renderSettingItem({
-            icon: <Palette size={24} color={Colors.shyBlue} />,
+            icon: <Palette size={22} color={Colors.shyBlue} />,
             title: "Appearance",
             subtitle: "Customize your app theme",
             onPress: () => {
               router.push("/appearance-screen");
             },
+            delay: 300,
           })}
         </View>
 
-        {/* <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacy & Data</Text>
-          {renderSettingItem({
-            icon: <Lock size={24} color={Colors.darkText} />,
-            title: "Privacy Settings",
-            subtitle: "",
-            onToggle: undefined,
-            onPress: () => {
-              router.push("/(screens)/demo-screen");
-            },
-          })}
-          {renderSettingItem({
-            icon: <History size={24} color={Colors.darkText} />,
-            title: "Clear History",
-            subtitle: "",
-            onToggle: undefined,
-            onPress: () => {
-              router.push("/(screens)/call-assistant");
-            },
-          })}
-        </View> */}
-
+     
         <TouchableOpacity style={styles.logoutButton}>
           <LogOut size={20} color={Colors.flirtyPink} />
           <Text variant='button' style={styles.logoutText}>
@@ -256,26 +333,63 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 180,
+    opacity: 0.7,
   },
   scrollView: {
     flex: 1,
   },
-  header: {
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  userSection: {
     paddingTop: Platform.OS === "web" ? 40 : 60,
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
-  headerTitle: {
-    color: Colors.darkText,
-    marginBottom: 8,
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
-  headerSubtitle: {
+  profileImageContainer: {
+    position: "relative",
+  },
+  profileImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 3,
+    borderColor: Colors.white,
+  },
+  editProfileBadge: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: Colors.flirtyPink,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: Colors.white,
+  },
+  profileInfo: {
+    marginLeft: 15,
+  },
+  profileName: {
+    color: Colors.darkText,
+    fontSize: 22,
+  },
+  profileEmail: {
     color: Colors.mediumText,
+    fontSize: 14,
   },
   proCard: {
-    margin: 20,
-    borderRadius: 20,
+    marginHorizontal: 20,
+    marginBottom: 24,
+    borderRadius: 16,
     overflow: "hidden",
     backgroundColor: Colors.white,
     shadowColor: Colors.black,
@@ -285,26 +399,41 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   proGradient: {
-    padding: 20,
+    padding: 0,
   },
   proContent: {
+    padding: 16,
+    flexDirection: "row",
     alignItems: "center",
+  },
+  proIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  proTextContainer: {
+    flex: 1,
+    marginLeft: 16,
+    marginRight: 8,
   },
   proTitle: {
     color: Colors.white,
-    marginTop: 12,
-    marginBottom: 8,
+    marginBottom: 4,
+    fontSize: 16,
   },
   proDescription: {
     color: Colors.white,
-    textAlign: "center",
-    marginBottom: 16,
+    fontSize: 12,
+    opacity: 0.9,
   },
   proButton: {
     backgroundColor: Colors.white,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -313,28 +442,32 @@ const styles = StyleSheet.create({
   },
   proButtonText: {
     color: Colors.darkText,
+    fontSize: 14,
+    fontWeight: "600",
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "600",
     color: Colors.darkText,
     marginLeft: 20,
-    marginBottom: 12,
+    marginBottom: 8,
+    letterSpacing: 0.3,
   },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.white,
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     marginBottom: 1,
   },
   settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Colors.cream,
     justifyContent: "center",
     alignItems: "center",
@@ -350,33 +483,41 @@ const styles = StyleSheet.create({
   settingTitle: {
     color: Colors.darkText,
     marginRight: 8,
+    fontWeight: "500",
   },
   settingSubtitle: {
     color: Colors.mediumText,
-    marginTop: 4,
+    marginTop: 2,
+    fontSize: 13,
+  },
+  toggle: {
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
   },
   proBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.flirtyPink,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 10,
   },
   proBadgeText: {
     color: Colors.white,
-    marginLeft: 4,
-    fontSize: 10,
+    marginLeft: 2,
+    fontSize: 9,
+    fontWeight: "bold",
   },
   logoutButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 16,
-    marginBottom: 40,
+    marginTop: 12,
+    marginBottom: 20,
   },
   logoutText: {
     color: Colors.flirtyPink,
     marginLeft: 8,
+    fontWeight: "500",
   },
 });

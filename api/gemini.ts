@@ -13,9 +13,12 @@ export const generatePickupLine = async (personDetails: any) => {
     Generate THREE distinct pickup lines that:
     - Sound natural and conversational
     - Match the requested tone exactly
-    - Subtly incorporate the provided details
-    - Are 1-2 sentences maximum
+    - Subtly don not incoporate the provided details but the line should be geared towards them
+    - Are 1 sentences maximum
     - Avoid clichés and artificial-sounding language
+    - Should not be too wordy and too pushy
+    - Try to be causal
+    - Add emojis where necessary
     
     Then select the BEST of these three lines.
     
@@ -36,8 +39,6 @@ export const generatePickupLine = async (personDetails: any) => {
     const results = await chatSession.sendMessage(prompt);
     const response = await results.response;
     const text = await response.text();
-
-    console.log("Raw text from Gemini:", text);
 
     if (!text || text.trim() === "") {
       throw new Error("Empty response from Gemini");

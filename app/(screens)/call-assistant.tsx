@@ -8,7 +8,12 @@ import { Colors } from "@/constants/colors";
 import { useCallAssistant } from "@/context/CallAssitantContext";
 import { normalize } from "@/utils/responsive";
 
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "expo-router";
 import LottieView from "lottie-react-native";
@@ -134,12 +139,18 @@ const CallAssistantScreen: React.FC = () => {
           >
             <Ionicons
               name='chevron-back'
-              size={28}
+              size={24}
               color={Colors.gradientPinkStart}
             />
           </TouchableOpacity>
 
           <View style={styles.welcomeContainer}>
+            <MaterialCommunityIcons
+              name='headphones-settings'
+              size={32}
+              color={Colors.gradientPinkStart}
+              style={styles.welcomeIcon}
+            />
             <Text variant='heading' style={styles.welcomeTitle}>
               Fluttr Call Assistant
             </Text>
@@ -160,11 +171,31 @@ const CallAssistantScreen: React.FC = () => {
             >
               <LinearGradient
                 colors={[Colors.gradientPinkStart, Colors.peach]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={styles.buttonGradient}
               >
+                <MaterialIcons
+                  name='keyboard-voice'
+                  size={20}
+                  color='white'
+                  style={styles.buttonIcon}
+                />
                 <Text style={styles.startButtonText}>Start Call Assistant</Text>
-                <MaterialIcons name='keyboard-voice' size={24} color='white' />
               </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.learnMoreButton}
+              onPress={() => {
+                /* Handle learn more press */
+              }}
+            >
+              <Text style={styles.learnMoreText}>Learn how it works</Text>
+              <Ionicons
+                name='chevron-forward'
+                size={16}
+                color={Colors.gradientPinkStart}
+              />
             </TouchableOpacity>
           </View>
         </LinearGradient>
@@ -193,25 +224,49 @@ const CallAssistantScreen: React.FC = () => {
               style={styles.closeButton}
               onPress={stopAssistant}
             >
-              <MaterialIcons name='close' size={24} color='#FF5F6D' />
+              <MaterialIcons name='close' size={20} color='#FF5F6D' />
             </TouchableOpacity>
-            <Text variant='body' style={styles.headerTitle}>
-              Call Assistant
-            </Text>
-            <View style={styles.listeningIndicator}>
-              <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
-                <AudioWaveform isActive={true} />
-              </Animated.View>
-              <Text variant='small' style={styles.listeningText}>
-                {isListening ? "Listening..." : "Paused"}
+            <View style={styles.headerCenter}>
+              <Text variant='body' style={styles.headerTitle}>
+                Call Assistant
               </Text>
+              <View style={styles.listeningIndicator}>
+                <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
+                  <AudioWaveform isActive={isListening} />
+                </Animated.View>
+                <Text
+                  variant='small'
+                  style={[
+                    styles.listeningText,
+                    isListening ? styles.listeningTextActive : {},
+                  ]}
+                >
+                  {isListening ? "Listening" : "Paused"}
+                </Text>
+              </View>
             </View>
+            <TouchableOpacity
+              style={[
+                styles.listenToggle,
+                isListening ? styles.listenToggleActive : {},
+              ]}
+              onPress={() => {
+                /* Toggle listening state */
+              }}
+            >
+              <MaterialIcons
+                name={isListening ? "mic" : "mic-off"}
+                size={18}
+                color={isListening ? Colors.white : Colors.mediumText}
+              />
+            </TouchableOpacity>
           </View>
 
           {/* Main Content */}
           <ScrollView
             style={styles.contentContainer}
             contentContainerStyle={styles.contentInner}
+            showsVerticalScrollIndicator={false}
           >
             {/* Transcription List */}
             <TranscriptionList transcriptions={transcriptions} />
@@ -219,9 +274,16 @@ const CallAssistantScreen: React.FC = () => {
 
           {/* Suggestions Container */}
           <View style={styles.suggestionsContainer}>
-            <Text variant='heading' style={[styles.suggestionsTitle]}>
-              Suggestions
-            </Text>
+            <View style={styles.suggestionsTitleContainer}>
+              <MaterialIcons
+                name='lightbulb-outline'
+                size={22}
+                color={Colors.gradientPinkStart}
+              />
+              <Text variant='heading' style={styles.suggestionsTitle}>
+                Suggestions
+              </Text>
+            </View>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -238,6 +300,12 @@ const CallAssistantScreen: React.FC = () => {
                 ))}
               {suggestions.filter((s: any) => !s.used).length === 0 && (
                 <View style={styles.emptySuggestion}>
+                  <FontAwesome5
+                    name='comments'
+                    size={16}
+                    color={Colors.mediumText}
+                    style={{ marginBottom: 8 }}
+                  />
                   <Text variant='body' style={styles.emptySuggestionText}>
                     Listening for conversation...
                   </Text>
@@ -260,6 +328,14 @@ const CallAssistantScreen: React.FC = () => {
                   ]}
                   onPress={() => setSpeakerType("self")}
                 >
+                  <Ionicons
+                    name='person'
+                    size={16}
+                    color={
+                      speakerType === "self" ? Colors.white : Colors.mediumText
+                    }
+                    style={{ marginRight: 5 }}
+                  />
                   <Text
                     style={[
                       styles.speakerButtonText,
@@ -276,6 +352,14 @@ const CallAssistantScreen: React.FC = () => {
                   ]}
                   onPress={() => setSpeakerType("other")}
                 >
+                  <Ionicons
+                    name='people'
+                    size={16}
+                    color={
+                      speakerType === "other" ? Colors.white : Colors.mediumText
+                    }
+                    style={{ marginRight: 5 }}
+                  />
                   <Text
                     style={[
                       styles.speakerButtonText,
@@ -294,15 +378,21 @@ const CallAssistantScreen: React.FC = () => {
                   placeholder={`Type what ${
                     speakerType === "self" ? "you" : "they"
                   } said...`}
+                  placeholderTextColor={Colors.mediumText}
                   returnKeyType='send'
                   onSubmitEditing={handleManualSubmit}
                   blurOnSubmit={false}
+                  autoFocus
                 />
                 <TouchableOpacity
-                  style={styles.sendButton}
+                  style={[
+                    styles.sendButton,
+                    !manualInput.trim() && styles.sendButtonDisabled,
+                  ]}
                   onPress={handleManualSubmit}
+                  disabled={!manualInput.trim()}
                 >
-                  <Ionicons name='send' size={20} color='white' />
+                  <Ionicons name='send' size={18} color='white' />
                 </TouchableOpacity>
               </View>
             </KeyboardAvoidingView>
@@ -335,7 +425,7 @@ const styles = StyleSheet.create({
     top: normalize(35),
     left: normalize(20),
     zIndex: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: normalize(24),
     padding: normalize(8),
     shadowColor: "#000",
@@ -344,42 +434,50 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-
   welcomeContainer: {
-    width: "90%",
+    width: "85%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 20,
-    padding: 30,
+    borderRadius: 24,
+    padding: normalize(28),
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  welcomeIcon: {
+    marginBottom: normalize(12),
   },
   welcomeTitle: {
     fontWeight: "bold",
     color: Colors.gradientPinkStart,
-    marginBottom: 10,
+    marginBottom: normalize(12),
     textAlign: "center",
   },
   welcomeText: {
     color: Colors.darkText,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: normalize(16),
+    lineHeight: normalize(22),
   },
   welcomeAnimation: {
-    width: 200,
-    height: 200,
-    marginVertical: 20,
+    width: normalize(180),
+    height: normalize(180),
+    marginVertical: normalize(16),
   },
   startButton: {
     width: "100%",
-    height: 50,
-    borderRadius: 25,
+    height: normalize(54),
+    borderRadius: normalize(27),
     overflow: "hidden",
-    marginTop: 20,
+    marginTop: normalize(16),
+    shadowColor: Colors.gradientPinkStart,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   buttonGradient: {
     flex: 1,
@@ -387,11 +485,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  buttonIcon: {
+    marginRight: normalize(10),
+  },
   startButtonText: {
-    color: Colors.buttonText,
-
+    color: Colors.white,
+    fontSize: normalize(16),
     fontWeight: "bold",
-    marginRight: 10,
+  },
+  learnMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: normalize(16),
+    padding: normalize(8),
+  },
+  learnMoreText: {
+    color: Colors.gradientPinkStart,
+    fontSize: normalize(14),
+    marginRight: normalize(4),
   },
   assistantContainer: {
     width: "100%",
@@ -403,14 +514,19 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    height: normalize(100),
+    height: normalize(70),
     backgroundColor: Colors.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: normalize(20),
     borderBottomWidth: 1,
-    borderBottomColor: Colors.gray,
+    borderBottomColor: "rgba(0,0,0,0.05)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   closeButton: {
     width: normalize(36),
@@ -420,42 +536,59 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   headerTitle: {
     color: Colors.gradientPinkStart,
     fontWeight: "bold",
+    fontSize: normalize(16),
+    marginBottom: normalize(4),
   },
   listeningIndicator: {
     flexDirection: "row",
     alignItems: "center",
-  },
-
-  listeningAnimation: {
-    width: normalize(40),
-    height: normalize(40),
+    justifyContent: "center",
   },
   listeningText: {
     color: Colors.mediumText,
-
     marginLeft: 5,
+    fontSize: normalize(12),
+  },
+  listeningTextActive: {
+    color: "#4CAF50",
+  },
+  listenToggle: {
+    width: normalize(36),
+    height: normalize(36),
+    borderRadius: 18,
+    backgroundColor: Colors.lightGray,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: normalize(4),
+  },
+  listenToggleActive: {
+    backgroundColor: "#4CAF50",
   },
   contentContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: Colors.graywhite,
+    backgroundColor: "rgba(249, 249, 251, 1)",
   },
   contentInner: {
-    padding: 15,
-    paddingBottom: 100,
+    padding: normalize(16),
+    paddingBottom: normalize(200),
   },
-
   suggestionsContainer: {
     width: "100%",
     backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: normalize(60), // More space for bottom elements (like call controls)
+    paddingHorizontal: normalize(20),
+    paddingTop: normalize(24),
+    paddingBottom: normalize(80),
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -464,37 +597,46 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 10,
-    minHeight: normalize(220), // Enough space for at least 2 suggestion cards and buttons
-    maxHeight: "60%", // Avoid taking over the whole screen
+    minHeight: normalize(220),
+    maxHeight: "60%",
   },
-
+  suggestionsTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: normalize(16),
+  },
   suggestionsTitle: {
     fontWeight: "bold",
     color: Colors.darkText,
-    paddingBottom: normalize(20),
+    marginLeft: normalize(8),
   },
   suggestionsScrollContent: {
-    paddingRight: 20,
+    paddingRight: normalize(20),
+    paddingBottom: normalize(12),
   },
   emptySuggestion: {
     width: width * 0.8,
-    height: normalize(60),
+    height: normalize(100),
     backgroundColor: Colors.lightGray,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 10,
+    marginRight: normalize(12),
+    padding: normalize(16),
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.05)",
   },
   emptySuggestionText: {
     color: Colors.mediumText,
     fontStyle: "italic",
+    textAlign: "center",
   },
   inputContainer: {
     width: "100%",
     backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 15,
+    padding: normalize(16),
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -503,18 +645,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(0,0,0,0.05)",
   },
   speakerToggle: {
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: normalize(12),
     alignSelf: "center",
   },
   speakerButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(8),
     borderRadius: 20,
     backgroundColor: Colors.lightGray,
-    marginHorizontal: 5,
+    marginHorizontal: normalize(6),
   },
   speakerButtonActive: {
     backgroundColor: Colors.gradientPinkStart,
@@ -522,6 +668,7 @@ const styles = StyleSheet.create({
   speakerButtonText: {
     color: Colors.mediumText,
     fontWeight: "500",
+    fontSize: normalize(14),
   },
   speakerButtonTextActive: {
     color: Colors.white,
@@ -534,17 +681,29 @@ const styles = StyleSheet.create({
     flex: 1,
     height: normalize(50),
     backgroundColor: Colors.lightGray,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    marginRight: 10,
+    borderRadius: 25,
+    paddingHorizontal: normalize(18),
+    marginRight: normalize(12),
+    fontSize: normalize(15),
   },
   sendButton: {
-    width: normalize(45),
-    height: normalize(45),
-    borderRadius: 22.5,
+    width: normalize(48),
+    height: normalize(48),
+    borderRadius: 24,
     backgroundColor: Colors.gradientPinkStart,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: Colors.gradientPinkStart,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  sendButtonDisabled: {
+    backgroundColor: Colors.mediumText,
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });
 

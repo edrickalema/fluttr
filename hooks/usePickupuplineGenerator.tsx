@@ -17,7 +17,6 @@ export const usePickupLineGenerator = () => {
   const [error, setError] = useState<string | null>(null);
 
   const generateLine = async (personDetails: PersonDetails) => {
-    console.log(personDetails);
     try {
       setIsLoading(true);
       setError(null);

@@ -56,6 +56,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_K;
+
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -63,12 +64,11 @@ const model = genAI.getGenerativeModel({
 });
 
 const generationConfig = {
-  responseModalities: [],
-  temperature: 0.8,
-  maxOutputTokens: 100,
-
-  topK: 40,
+  temperature: 1,
   topP: 0.95,
+  topK: 64,
+  maxOutputTokens: 65536,
+  responseModalities: [],
 };
 
 export const chatSession = model.startChat({

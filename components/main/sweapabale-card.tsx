@@ -2,6 +2,7 @@
 import { Colors } from "@/constants/colors";
 import { globalStyles } from "@/constants/globalStyles";
 import { normalize } from "@/utils/responsive";
+import { getRelativeTime } from "@/utils/timeUtils";
 import { Copy, Share2, Trash2 } from "lucide-react-native";
 import React, { useRef } from "react";
 import {
@@ -26,8 +27,8 @@ interface SwipeableCardProps {
   line: {
     id: string;
     text: string;
-    category: string;
-    createdAt: string;
+    category?: string;
+    createdAt?: string;
   };
   onDelete: (id: string) => void;
 }
@@ -125,12 +126,14 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
                 ]}
               >
                 <Text variant='small' style={styles.categoryText}>
-                  {line.category.charAt(0).toUpperCase() +
-                    line.category.slice(1)}
+                  {line.category
+                    ? line.category.charAt(0).toUpperCase() +
+                      line.category.slice(1)
+                    : ""}
                 </Text>
               </View>
               <Text variant='body' style={styles.dateText}>
-                {line.createdAt}
+                {getRelativeTime(Number(line?.createdAt))}
               </Text>
             </View>
           </View>

@@ -1,369 +1,29 @@
-// import { Fonts } from "@/constants/fonts";
-// import { Flower, Phone, Sparkle, Sparkles } from "lucide-react-native";
-
-// import FloatingAssistantBubble from "@/components/assistance/FloatAssitantBubble";
-// import MessagePrompt from "@/components/assistance/MessagePrompt";
-// import AssistantPanel from "@/components/assistance/SmartAssitantPanel";
-// import GenerateLineModal from "@/components/modal/generate-new-line";
-// import { Colors } from "@/constants/colors";
-// import { globalStyles } from "@/constants/globalStyles";
-// import { useAssistant } from "@/context/AssitantContext";
-// import { useTheme } from "@/context/ThemeContext";
-// import { normalize } from "@/utils/responsive";
-// import { LinearGradient } from "expo-linear-gradient";
-// import { useRouter } from "expo-router";
-// import React, { useEffect, useState } from "react";
-// import {
-//   Dimensions,
-//   SafeAreaView,
-//   ScrollView,
-//   StatusBar,
-//   StyleSheet,
-//   Text,
-//   TouchableOpacity,
-//   View,
-// } from "react-native";
-
-// const { width } = Dimensions.get("window");
-// const cardWidth = width * 0.85;
-
-// interface HomeScreenProps {
-//   navigation: any;
-// }
-
-// /**
-//  * HomeScreen component serves as the main landing page for the app's tab navigation.
-//  *
-//  * @component
-//  * @param {HomeScreenProps} props - The props for the HomeScreen component.
-//  * @param {object} props.navigation - Navigation prop for navigating between screens.
-//  *
-//  * @description
-//  * - Displays the app's branding, hero section, and feature highlights.
-//  * - Integrates an AI-powered assistant with a floating bubble and panel.
-//  * - Shows a message prompt on first launch if the assistant is enabled.
-//  * - Allows users to generate new AI-powered pickup lines via a modal.
-//  * - Provides a button to call the assistant for crafting replies.
-//  *
-//  * @returns {JSX.Element} The rendered HomeScreen component.
-//  */
-// const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [showPrompt, setShowPrompt] = useState(true);
-//   const [firstLaunch, setFirstLaunch] = useState(true);
-
-//   const { theme } = useTheme();
-//   const fonts = Fonts();
-//   const {
-//     isAssistantEnabled,
-//     isAssistantVisible,
-//     showAssistant,
-//     hideAssistant,
-//   } = useAssistant();
-
-//   // Simulate first launch check
-//   useEffect(() => {
-//     // In a real app, this would check if it's the first launch after receiving a notification
-//     setTimeout(() => {
-//       setFirstLaunch(false);
-//     }, 5000);
-//   }, []);
-
-//   const router = useRouter();
-
-//   const generateNewPickupLine = () => {
-//     // TODO: Implement AI pickup line generation
-//     setIsModalVisible(true);
-//     console.log("Generating new pickup line...");
-//   };
-
-//   const handleGenerateLine = () => {
-//     setIsModalVisible(false);
-//   };
-
-//   return (
-//     <SafeAreaView style={globalStyles.container}>
-//       <StatusBar barStyle='dark-content' />
-//       {/* Show message prompt only on what we consider "first launch" and if assistant is enabled */}
-//       {firstLaunch && isAssistantEnabled && showPrompt && (
-//         <MessagePrompt onDismiss={() => setShowPrompt(false)} />
-//       )}
-//       {isAssistantEnabled && !isAssistantVisible && (
-//         <FloatingAssistantBubble onOpenAssistant={showAssistant} />
-//       )}
-//       {/* Assistant Panel */}
-//       <AssistantPanel isVisible={isAssistantVisible} onClose={hideAssistant} />
-//       <View style={styles.header}>
-//         <View>
-//           <Text style={styles.logo}>Fluttr</Text>
-//         </View>
-//         <TouchableOpacity
-//           style={styles.sparkleBox}
-//           onPress={generateNewPickupLine}
-//         >
-//           <Flower
-//             style={{
-//               shadowColor: Colors.pink,
-//               shadowOpacity: 0.8,
-//               shadowRadius: 5,
-//             }}
-//             size={normalize(30)}
-//             color={Colors.pink}
-//           />
-//         </TouchableOpacity>
-//       </View>
-//       <ScrollView showsVerticalScrollIndicator={false}>
-//         <View style={styles.heroSection}>
-//           <LinearGradient
-//             colors={[theme?.gradientColors[0], theme?.gradientColors[1]]}
-//             start={{ x: 0, y: 0 }}
-//             end={{ x: 1, y: 1 }}
-//           />
-//           <View style={styles.heroContent}>
-//             <Text style={styles.heroTitle}>
-//               Never Be{" "}
-//               <Text style={{ color: Colors.pink, fontWeight: "bold" }}>
-//                 Textless
-//               </Text>
-//               {" & "}
-//               <Text style={{ color: Colors.pink, fontWeight: "bold" }}>
-//                 Speechless
-//               </Text>
-//               {" Again"}
-//             </Text>
-//             <Text style={styles.heroSubtitle}>
-//               Craft the perfect replies that make your crush smile 😍
-//             </Text>
-//           </View>
-
-//           <TouchableOpacity
-//             style={styles.primaryButton}
-//             onPress={() => router.push("/(screens)/call-assistant")}
-//           >
-//             <Phone size={22} color={Colors.white} style={styles.buttonIcon} />
-//             <Text style={styles.primaryButtonText}>Call Assistant</Text>
-//           </TouchableOpacity>
-//         </View>
-
-//         <View style={styles.featuresSection}>
-//           <View style={styles.featureCard}>
-//             <View style={styles.featureImageContainer}>
-//               <Sparkles size={normalize(30)} color={Colors.pink} />
-//             </View>
-//             <Text style={styles.featureTitle}>AI-Powered Suggestions</Text>
-//             <Text style={styles.featureText}>
-//               Our smart assistant analyzes messages and creates personalized
-//               replies tailored to your your style.
-//             </Text>
-//           </View>
-
-//           <View
-//             style={StyleSheet.compose(globalStyles.card, styles.featureCard)}
-//           >
-//             <View style={styles.featureImageContainer}>
-//               <Sparkle size={normalize(34)} color={Colors.pink} />
-//             </View>
-//             <Text style={styles.featureTitle}> Call & Date Assistance</Text>
-//             <Text style={styles.featureText}>
-//               Use our assistant during live calls or dates to generate quick,
-//               thoughtful responses , ensuring smooth and engaging conversations.
-//             </Text>
-//           </View>
-//         </View>
-//       </ScrollView>
-//       {/* Generate New pickup line modal */}
-//       <GenerateLineModal
-//         visible={isModalVisible}
-//         onClose={() => setIsModalVisible(false)}
-//         onGenerate={handleGenerateLine}
-//       />
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   header: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     marginTop: normalize(20),
-//     paddingHorizontal: normalize(20),
-//   },
-
-//   logo: {
-//     ...Fonts().heading,
-//     fontWeight: "bold",
-//     color: Colors.pink,
-//   },
-
-//   sparkleBox: {
-//     backgroundColor: Colors.cream,
-//     borderColor: Colors.pink,
-//     width: normalize(50),
-//     height: normalize(50),
-//     borderRadius: normalize(20),
-//     justifyContent: "center",
-//     alignItems: "center",
-//     borderWidth: normalize(5),
-//     marginTop: normalize(10),
-//     shadowColor: Colors.pink,
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 6,
-//     elevation: 4,
-//   },
-
-//   heroSection: {
-//     alignItems: "center",
-//     marginVertical: normalize(20),
-//   },
-
-//   heroContent: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     paddingHorizontal: normalize(24),
-//   },
-
-//   heroImage: {
-//     width: normalize(100),
-//     height: normalize(100),
-//     marginBottom: normalize(15),
-//     resizeMode: "contain",
-//   },
-
-//   heroTitle: {
-//     ...Fonts().subheading,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//     marginBottom: normalize(10),
-//     color: Colors.darkText || "#333",
-//   },
-
-//   heroSubtitle: {
-//     ...Fonts().body,
-//     textAlign: "center",
-//     color: Colors.mediumText || "#666",
-//     paddingHorizontal: normalize(20),
-//   },
-
-//   primaryButton: {
-//     backgroundColor: Colors.gradientPinkStart || "#FF4785",
-//     borderRadius: normalize(30),
-//     paddingVertical: normalize(14),
-//     paddingHorizontal: normalize(28),
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     shadowColor: Colors.gradientPinkStart || "#FF4785",
-//     shadowOffset: { width: 0, height: 4 },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 5,
-//     elevation: 5,
-//     marginTop: normalize(8),
-//   },
-
-//   primaryButtonText: {
-//     color: "#FFFFFF",
-//     fontSize: normalize(16),
-//     fontWeight: "600",
-//   },
-
-//   buttonIcon: {
-//     marginRight: normalize(10),
-//   },
-
-//   tipsSection: {
-//     marginBottom: normalize(30),
-//   },
-
-//   tipsScrollContent: {
-//     paddingRight: normalize(20),
-//     paddingBottom: normalize(10),
-//   },
-
-//   featuresSection: {
-//     marginBottom: normalize(40),
-//     paddingHorizontal: normalize(20),
-//   },
-
-//   featureCard: {
-//     backgroundColor: Colors.white,
-//     borderRadius: normalize(16),
-//     padding: normalize(20),
-//     marginBottom: normalize(15),
-//     alignItems: "center",
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     elevation: 3,
-//     borderWidth: 1,
-//     borderColor: "#F0F0F0",
-//   },
-
-//   featureImageContainer: {
-//     width: normalize(80),
-//     height: normalize(80),
-//     borderRadius: normalize(40),
-//     backgroundColor: "#FFF0F5",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     marginBottom: normalize(15),
-//   },
-
-//   featureImage: {
-//     width: normalize(40),
-//     height: normalize(40),
-//     resizeMode: "contain",
-//   },
-
-//   featureTitle: {
-//     ...Fonts.subheading,
-//     fontWeight: "600",
-//     marginBottom: normalize(8),
-//     color: Colors.darkText || "#333",
-//     textAlign: "center",
-//   },
-
-//   featureText: {
-//     ...Fonts.body,
-//     color: Colors.mediumText || "#666",
-//     textAlign: "center",
-//     lineHeight: normalize(20),
-//   },
-// });
-
-// export default HomeScreen;
-import { Fonts } from "@/constants/fonts";
-import { Flower, Phone, Sparkle, Sparkles } from "lucide-react-native";
-
 import FloatingAssistantBubble from "@/components/assistance/FloatAssitantBubble";
 import MessagePrompt from "@/components/assistance/MessagePrompt";
 import AssistantPanel from "@/components/assistance/SmartAssitantPanel";
 import Text from "@/components/main/custom-text";
 import GenerateLineModal from "@/components/modal/generate-new-line";
 import { Colors } from "@/constants/colors";
-import { globalStyles } from "@/constants/globalStyles";
 import { useAssistant } from "@/context/AssitantContext";
 import { useTheme } from "@/context/ThemeContext";
 import { normalize } from "@/utils/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { Heart, PhoneCall, Sparkle } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
+  Animated,
   Dimensions,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  TextStyle,
   TouchableOpacity,
   View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
-const cardWidth = width * 0.85;
+const cardWidth = width * 0.9;
 
 interface HomeScreenProps {
   navigation: any;
@@ -373,9 +33,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showPrompt, setShowPrompt] = useState(true);
   const [firstLaunch, setFirstLaunch] = useState(true);
+  const [scrollY] = useState(new Animated.Value(0));
 
   const { theme } = useTheme();
-  const fonts = Fonts();
+
   const {
     isAssistantEnabled,
     isAssistantVisible,
@@ -393,271 +54,353 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const generateNewPickupLine = () => {
     setIsModalVisible(true);
-    console.log("Generating new pickup line...");
   };
 
   const handleGenerateLine = () => {
     setIsModalVisible(false);
   };
 
-  const styles = {
-    ...baseStyles,
-    logo: {
-      ...fonts.heading,
-      fontWeight: "bold",
-      color: Colors.pink,
-    },
-    heroTitle: {
-      ...fonts.subheading,
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: normalize(10),
-      color: Colors.darkText || "#333",
-    },
-    heroSubtitle: {
-      ...fonts.body,
-      textAlign: "center",
-      color: Colors.mediumText || "#666",
-      paddingHorizontal: normalize(20),
-    },
-    featureTitle: {
-      ...fonts.subheading,
-      fontWeight: "600",
-      marginBottom: normalize(8),
-      color: Colors.darkText || "#333",
-      textAlign: "center",
-    },
-    featureText: {
-      ...fonts.body,
-      color: Colors.mediumText || "#666",
-      textAlign: "center",
-      lineHeight: normalize(20),
-    },
-  };
+  // Enhanced header animations
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 60],
+    outputRange: [0, 1],
+    extrapolate: "clamp",
+  });
+
+  const headerElevation = scrollY.interpolate({
+    inputRange: [0, 60],
+    outputRange: [0, 6],
+    extrapolate: "clamp",
+  });
 
   return (
-    <SafeAreaView style={globalStyles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle='dark-content' />
+
       {firstLaunch && isAssistantEnabled && showPrompt && (
         <MessagePrompt onDismiss={() => setShowPrompt(false)} />
       )}
+
       {isAssistantEnabled && !isAssistantVisible && (
         <FloatingAssistantBubble onOpenAssistant={showAssistant} />
       )}
+
       <AssistantPanel isVisible={isAssistantVisible} onClose={hideAssistant} />
+
+      {/* Enhanced header with better animation */}
+      <Animated.View
+        style={[
+          styles.headerBackground,
+          {
+            opacity: headerOpacity,
+            shadowOpacity: headerOpacity,
+            elevation: headerElevation,
+          },
+        ]}
+      />
+
       <View style={styles.header}>
         <View>
-          <Text variant='heading' style={styles.logo as TextStyle}>
+          <Text variant='heading' style={styles.logo}>
             Fluttr
+          </Text>
+          <Text variant='body' style={styles.subtitle}>
+            Your AI Romance Assistant
           </Text>
         </View>
         <TouchableOpacity
-          style={styles.sparkleBox}
+          style={styles.sparkleButton}
+          activeOpacity={0.8}
           onPress={generateNewPickupLine}
         >
-          <Flower
-            style={{
-              shadowColor: Colors.pink,
-              shadowOpacity: 0.8,
-              shadowRadius: 5,
-            }}
-            size={normalize(30)}
-            color={Colors.pink}
-          />
+          <Heart size={24} color={Colors.pink} />
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.heroSection}>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Improved hero section with rounded corners and better spacing */}
+        <View style={styles.heroContainer}>
           <LinearGradient
-            colors={[theme?.gradientColors[0], theme?.gradientColors[1]]}
+            colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-          />
-          <View style={styles.heroContent}>
-            <Text variant='subheading' style={styles.heroTitle as TextStyle}>
-              Never Be{" "}
-              <Text
-                variant='subheading'
-                style={{ color: Colors.pink, fontWeight: "bold" }}
-              >
-                Textless
-              </Text>
-              {" & "}
-              <Text
-                variant='subheading'
-                style={{ color: Colors.pink, fontWeight: "bold" }}
-              >
-                Speechless
-              </Text>
-              {" Again"}
-            </Text>
-            <Text variant='body' style={styles.heroSubtitle as TextStyle}>
-              Craft the perfect replies that make your crush smile 😍
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => router.push("/(screens)/call-assistant")}
+            style={styles.heroGradient}
           >
-            <Phone size={22} color={Colors.white} style={styles.buttonIcon} />
-            <Text style={styles.primaryButtonText} variant='button'>
-              Call Assistant
-            </Text>
+            {/* Subtle pattern overlay instead of empty image */}
+            <View style={styles.patternOverlay}>
+              <View style={styles.dotPattern} />
+            </View>
+
+            <View style={styles.heroContent}>
+              <Text variant='heading' style={styles.heroTitle}>
+                Perfect Replies, Every Time
+              </Text>
+              <Text variant='body' style={styles.heroDescription}>
+                Let's help you craft the perfect messages for your special
+                someone
+              </Text>
+              <TouchableOpacity
+                style={styles.callButton}
+                activeOpacity={0.85}
+                onPress={() => router.push("/(screens)/call-assistant")}
+              >
+                <PhoneCall
+                  size={22}
+                  color={Colors.lightText}
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.buttonText} variant='button'>
+                  Call Assistant
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </LinearGradient>
+        </View>
+
+        {/* Refined features section with improved spacing and visual hierarchy */}
+        <View style={styles.featuresSection}>
+          <Text variant='subheading' style={styles.sectionTitle}>
+            Smart Features
+          </Text>
+
+          {/* Enhanced feature cards with consistent spacing */}
+          <TouchableOpacity activeOpacity={0.92} style={styles.featureCard}>
+            <View style={styles.featureIcon}>
+              <Sparkle size={28} color={Colors.pink} />
+            </View>
+            <View style={styles.featureContent}>
+              <Text variant='subheading' style={styles.featureTitle}>
+                AI-Powered Suggestions
+              </Text>
+              <Text variant='body' style={styles.featureDescription}>
+                Get personalized message suggestions based on your conversation
+                style
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={0.92} style={styles.featureCard}>
+            <View style={styles.featureIcon}>
+              <Heart size={28} color={Colors.pink} />
+            </View>
+            <View style={styles.featureContent}>
+              <Text variant='subheading' style={styles.featureTitle}>
+                Romance Assistant
+              </Text>
+              <Text variant='body' style={styles.featureDescription}>
+                Your personal guide to meaningful conversations and connections
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.featuresSection}>
-          <View style={styles.featureCard}>
-            <View style={styles.featureImageContainer}>
-              <Sparkles size={normalize(30)} color={Colors.pink} />
-            </View>
-            <Text variant='subheading' style={styles.featureTitle as TextStyle}>
-              AI-Powered Suggestions
-            </Text>
-            <Text variant='body' style={styles.featureText as TextStyle}>
-              Our smart assistant analyzes messages and creates personalized
-              replies tailored to your your style.
-            </Text>
-          </View>
-
-          <View
-            style={StyleSheet.compose(globalStyles.card, styles.featureCard)}
-          >
-            <View style={styles.featureImageContainer}>
-              <Sparkle size={normalize(34)} color={Colors.pink} />
-            </View>
-            <Text variant='subheading' style={styles.featureTitle as TextStyle}>
-              Call & Date Assistance
-            </Text>
-            <Text variant='body' style={styles.featureText as TextStyle}>
-              Use our assistant during live calls or dates to generate quick,
-              thoughtful responses, ensuring smooth and engaging conversations.
-            </Text>
-          </View>
-        </View>
       </ScrollView>
+
       <GenerateLineModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        onGenerate={handleGenerateLine}
+        onGenerate={() => {}}
       />
     </SafeAreaView>
   );
 };
 
-const baseStyles = StyleSheet.create({
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.cream,
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  headerBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 110,
+    backgroundColor: Colors.cream,
+    zIndex: 1,
+    shadowColor: Colors.pink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0,
+    shadowRadius: 6,
+    elevation: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.05)",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: normalize(20),
-    paddingHorizontal: normalize(20),
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+    zIndex: 2,
+    marginTop: normalize(50),
   },
-
-  sparkleBox: {
-    backgroundColor: Colors.cream,
-    borderColor: Colors.pink,
-    width: normalize(50),
-    height: normalize(50),
-    borderRadius: normalize(20),
+  logo: {
+    color: Colors.pink,
+    marginBottom: 6,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: Colors.mediumText,
+  },
+  sparkleButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.lightText,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: normalize(5),
-    marginTop: normalize(10),
+    shadowColor: Colors.pink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  heroContainer: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 24,
+    overflow: "hidden",
+    shadowColor: Colors.pink,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  heroGradient: {
+    paddingVertical: normalize(30),
+    borderRadius: 24,
+    overflow: "hidden",
+  },
+  patternOverlay: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    opacity: 0.07,
+  },
+  dotPattern: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "transparent",
+    backgroundSize: "10px 10px",
+    backgroundImage: `radial-gradient(white 1px, transparent 0),
+                     radial-gradient(white 1px, transparent 0)`,
+    backgroundPosition: "0 0, 15px 15px",
+  },
+  heroContent: {
+    padding: 30,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  heroTitle: {
+    color: Colors.lightText,
+    textAlign: "center",
+    marginBottom: 16,
+    fontSize: 30,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0,0,0,0.15)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  heroDescription: {
+    color: Colors.lightText,
+    textAlign: "center",
+    marginBottom: 28,
+    opacity: 0.9,
+    fontSize: 16,
+    lineHeight: 22,
+    maxWidth: "85%",
+  },
+  callButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: Colors.lightText,
+    shadowColor: "rgba(0,0,0,0.2)",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  buttonIcon: {
+    marginRight: 10,
+  },
+  buttonText: {
+    color: Colors.lightText,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  featuresSection: {
+    padding: 20,
+    marginTop: 32,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    color: Colors.darkText,
+    marginBottom: 20,
+    fontWeight: "600",
+    paddingLeft: 5,
+  },
+  featureCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.lightText,
+    padding: 24,
+    borderRadius: 20,
+    marginBottom: 20,
+    shadowColor: Colors.pink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.02)",
+  },
+  featureIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.cream,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 20,
     shadowColor: Colors.pink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: 3,
+    elevation: 2,
   },
-
-  heroSection: {
-    alignItems: "center",
-    marginVertical: normalize(20),
-  },
-
-  heroContent: {
+  featureContent: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: normalize(24),
   },
-
-  heroImage: {
-    width: normalize(100),
-    height: normalize(100),
-    marginBottom: normalize(15),
-    resizeMode: "contain",
+  featureTitle: {
+    fontSize: 18,
+    color: Colors.darkText,
+    marginBottom: 8,
+    fontWeight: "600",
   },
-
-  primaryButton: {
-    backgroundColor: Colors.gradientPinkStart || "#FF4785",
-    borderRadius: normalize(30),
-    paddingVertical: normalize(14),
-    paddingHorizontal: normalize(28),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: Colors.gradientPinkStart || "#FF4785",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 5,
-    marginTop: normalize(8),
-  },
-
-  primaryButtonText: {
-    color: "#FFFFFF",
-  },
-
-  buttonIcon: {
-    marginRight: normalize(10),
-  },
-
-  tipsSection: {
-    marginBottom: normalize(30),
-  },
-
-  tipsScrollContent: {
-    paddingRight: normalize(20),
-    paddingBottom: normalize(10),
-  },
-
-  featuresSection: {
-    marginBottom: normalize(40),
-    paddingHorizontal: normalize(20),
-  },
-
-  featureCard: {
-    backgroundColor: Colors.white,
-    borderRadius: normalize(16),
-    padding: normalize(20),
-    marginBottom: normalize(15),
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: "#F0F0F0",
-  },
-
-  featureImageContainer: {
-    width: normalize(80),
-    height: normalize(80),
-    borderRadius: normalize(40),
-    backgroundColor: "#FFF0F5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: normalize(15),
-  },
-
-  featureImage: {
-    width: normalize(40),
-    height: normalize(40),
-    resizeMode: "contain",
+  featureDescription: {
+    fontSize: 14,
+    color: Colors.mediumText,
+    lineHeight: 22,
   },
 });
 
