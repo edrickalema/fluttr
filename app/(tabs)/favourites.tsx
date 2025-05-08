@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { globalStyles } from "@/constants/globalStyles";
+import React from "react";
+import { Text, View } from "react-native";
 
 export default function FavouriteLines() {
   return (
-    <View>
+    <View style={globalStyles.container}>
       <Text>favourites</Text>
     </View>
-  )
+  );
 }

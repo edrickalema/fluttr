@@ -15,7 +15,7 @@ export default function Index() {
       <Text style={globalStyles.text as TextStyle}>
         Your crush is waiting for you!
       </Text>
-      <Link href='/(tabs)/index' asChild>
+      <Link href={"/(tabs)"} asChild>
         <AnimatedButton title='Get Started' />
       </Link>
     </View>

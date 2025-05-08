@@ -1,6 +1,7 @@
+import { Colors } from "@/constants/colors";
 import { normalize } from "@/utils/responsive";
 import { StyleSheet } from "react-native";
-import { Colors } from "./Colors";
+import { Fonts } from "./fonts";
 
 export const globalStyles = StyleSheet.create({
   // General container for the app
@@ -17,21 +18,28 @@ export const globalStyles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.darkText,
     textAlign: "center",
-    marginBottom: normalize(20),
+    marginBottom: normalize(5),
   },
 
   // Button style
   button: {
     backgroundColor: Colors.buttonBackground,
-    paddingVertical: normalize(12),
-    paddingHorizontal: normalize(32),
-    borderRadius: normalize(8),
+    alignItems: "center",
+    paddingVertical: normalize(15),
+    borderRadius: normalize(12),
+  },
+  actionButton: {
+    width: normalize(40),
+    height: normalize(40),
+    borderRadius: normalize(20),
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
   buttonText: {
     color: Colors.buttonText,
-    fontSize: normalize(18),
     fontWeight: "600",
+      ...Fonts.button,
   },
 
   // Header style
@@ -83,14 +91,14 @@ export const globalStyles = StyleSheet.create({
   // Card Style
   card: {
     backgroundColor: Colors.cream,
-    borderRadius: normalize(10),
+    borderRadius: normalize(15),
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowRadius: 3,
+    elevation: 3,
     marginBottom: normalize(15),
-    padding: normalize(12),
+    padding: normalize(20),
   },
 
   // Pagination Style

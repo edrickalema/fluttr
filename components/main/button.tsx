@@ -16,7 +16,7 @@ import Animated, {
 
 
 import { Fonts } from "@/constants/fonts";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/colors";
 
 interface AnimatedButtonProps {
   title: string;
