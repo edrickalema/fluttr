@@ -1,0 +1,115 @@
+import { normalize } from "@/utils/responsive";
+import { StyleSheet } from "react-native";
+import { Colors } from "./Colors";
+
+export const globalStyles = StyleSheet.create({
+  // General container for the app
+  container: {
+    flex: 1,
+    backgroundColor: Colors.cream,
+    paddingHorizontal: normalize(16),
+    paddingTop: normalize(20),
+  },
+
+  // Title Style
+  title: {
+    fontSize: normalize(24),
+    fontWeight: "bold",
+    color: Colors.darkText,
+    textAlign: "center",
+    marginBottom: normalize(20),
+  },
+
+  // Button style
+  button: {
+    backgroundColor: Colors.buttonBackground,
+    paddingVertical: normalize(12),
+    paddingHorizontal: normalize(32),
+    borderRadius: normalize(8),
+    alignItems: "center",
+  },
+  buttonText: {
+    color: Colors.buttonText,
+    fontSize: normalize(18),
+    fontWeight: "600",
+  },
+
+  // Header style
+  header: {
+    fontSize: normalize(22),
+    fontWeight: "700",
+    color: Colors.darkText,
+    textAlign: "center",
+    marginVertical: normalize(15),
+  },
+
+  // Text input style
+  textInput: {
+    height: normalize(40),
+    borderColor: Colors.mediumText,
+    borderWidth: 1,
+    borderRadius: normalize(8),
+    paddingLeft: normalize(12),
+    marginVertical: normalize(10),
+    fontSize: normalize(16),
+    color: Colors.darkText,
+  },
+
+  // Footer style
+  footer: {
+    marginTop: "auto",
+    backgroundColor: Colors.lavender,
+    paddingVertical: normalize(12),
+    alignItems: "center",
+  },
+
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.cream,
+    paddingHorizontal: normalize(20),
+  },
+
+  // Text Styles
+  text: {
+    fontSize: normalize(14),
+    color: Colors.mediumText,
+    fontWeight: "400",
+    textAlign: "center",
+  },
+
+  // Card Style
+  card: {
+    backgroundColor: Colors.cream,
+    borderRadius: normalize(10),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+    marginBottom: normalize(15),
+    padding: normalize(12),
+  },
+
+  // Pagination Style
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: normalize(15),
+  },
+
+  paginationButton: {
+    width: normalize(10),
+    height: normalize(10),
+    margin: normalize(5),
+    borderRadius: normalize(5),
+    backgroundColor: Colors.paginationInactive,
+  },
+
+  paginationActiveButton: {
+    backgroundColor: Colors.paginationActive,
+  },
+});
