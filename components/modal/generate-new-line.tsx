@@ -8,6 +8,7 @@ import { ChevronRight, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Dimensions,
+  FlatList,
   Modal,
   ScrollView,
   StyleSheet,
@@ -41,7 +42,7 @@ export default function GenerateLineModal({
   const [formData, setFormData] = useState({
     appearance: "",
     personality: "",
-    interests: "",
+    sharedInterests: "",
   });
 
   const handleNext = () => {
@@ -144,18 +145,83 @@ export default function GenerateLineModal({
               {currentStepData.isInfoOnly ? (
                 ""
               ) : (
-                <TextInput
-                  style={styles.input}
-                  placeholder={currentStepData.placeholder}
-                  placeholderTextColor='#999'
-                  multiline
-                  value={
-                    formData[currentStepData.field as keyof typeof formData]
-                  }
-                  onChangeText={(text) =>
-                    updateField(currentStepData.field, text)
-                  }
-                />
+                <>
+                  <TextInput
+                    style={styles.input}
+                    placeholder={currentStepData.placeholder}
+                    placeholderTextColor='#999'
+                    multiline
+                    value={
+                      formData[currentStepData.field as keyof typeof formData]
+                    }
+                    onChangeText={(text) =>
+                      updateField(currentStepData.field, text)
+                    }
+                  />
+                  <View
+                    style={{
+                      width: "100%",
+                      padding: normalize(10),
+
+                      borderRadius: normalize(15),
+                      marginTop: normalize(10),
+                      flexDirection: "row",
+                      gap: normalize(10),
+                    }}
+                  >
+                    {currentStepData.examples && (
+                      <View
+                        style={{
+                          maxHeight: normalize(150),
+                          marginVertical: normalize(8),
+                        }}
+                      >
+                        <Text
+                          style={[
+                            globalStyles.text,
+                            {
+                              color: Colors.darkText,
+                              fontSize: normalize(12),
+                              marginBottom: normalize(5),
+                              textAlign: "left",
+                            },
+                          ]}
+                        >
+                          Examples
+                        </Text>
+                        <FlatList
+                          data={currentStepData.examples}
+                          keyExtractor={(_, index) => `example-${index}`}
+                          horizontal={true}
+                          scrollEnabled={true}
+                          nestedScrollEnabled={true}
+                          showsHorizontalScrollIndicator={false}
+                          contentContainerStyle={{
+                            paddingBottom: normalize(5),
+                          }}
+                          renderItem={({ item }) => (
+                            <Text
+                              style={[
+                                Fonts.body,
+                                {
+                                  color: Colors.mediumText,
+                                  marginTop: normalize(5),
+                                  fontSize: normalize(10),
+                                  backgroundColor: Colors.cream,
+                                  padding: normalize(7),
+                                  borderRadius: normalize(4),
+                                  marginHorizontal: normalize(5),
+                                },
+                              ]}
+                            >
+                              {item}
+                            </Text>
+                          )}
+                        />
+                      </View>
+                    )}
+                  </View>
+                </>
               )}
             </Animated.View>
           </ScrollView>
