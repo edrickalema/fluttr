@@ -1,37 +1,42 @@
 // app/(tabs)/settings.tsx
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  TouchableOpacity,
-  Platform,
-  Image,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
-  FadeIn,
-  SlideInRight,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import {
-  Heart,
-  Bell,
-  MessageCircle,
-  Lock,
-  Crown,
-  ChevronRight,
-  Sparkles,
-  Palette,
-  History,
-  LogOut,
-} from "lucide-react-native";
 import { Colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  Bell,
+  ChevronRight,
+  Crown,
+  Heart,
+  History,
+  Lock,
+  LogOut,
+  MessageCircle,
+  Palette,
+  Sparkles,
+} from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
 // import { getSelectedTone } from "@/utils/storage";
+
+interface SettingItemProps {
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+  isPro?: boolean;
+  isToggle?: boolean;
+  value?: boolean;
+  onToggle?: () => void;
+  onPress?: () => void;
+}
 
 export default function SettingsScreen() {
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
@@ -45,7 +50,7 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     async function loadTone() {
-      // 
+      //
       // const tone = await getSelectedTone();
       // setSelectedTone(tone);
     }
@@ -68,16 +73,7 @@ export default function SettingsScreen() {
     value = false,
     onToggle,
     onPress,
-  }:{
-    icon: React.ReactNode;
-    title: string;
-    subtitle?: string;
-    isPro?: boolean;
-    isToggle?: boolean;
-    value?: boolean;
-    onToggle?: () => void;
-    onPress?: () => void;
-  }) => (
+  }: SettingItemProps) => (
     <TouchableOpacity
       style={styles.settingItem}
       onPress={onPress}

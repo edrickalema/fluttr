@@ -23,7 +23,11 @@ export const steps = [
     description: "Where did your paths cross, or where will this line be used?",
     placeholder: "E.g., A cozy café, a dating app, during a class, at work...",
     field: "context",
-    examples: ["At a charming bookstore", "First message on Bumble", "We work together"],
+    examples: [
+      "At a charming bookstore",
+      "First message on Bumble",
+      "We work together",
+    ],
     icon: MapPin, // Location pin icon for meeting context
     isInfoOnly: false,
   },
@@ -46,7 +50,10 @@ export const steps = [
     description: "What about their personality or passions captivates you?",
     placeholder: "E.g., Warm-hearted, adventurous spirit, love for art...",
     field: "personality",
-    examples: ["They have a heart of gold", "They're passionate about painting"],
+    examples: [
+      "They have a heart of gold",
+      "They're passionate about painting",
+    ],
     icon: Heart, // Heart icon for personality traits
     isInfoOnly: false,
   },
@@ -54,7 +61,8 @@ export const steps = [
     id: 5,
     title: "Shared Connections",
     description: "What magical things do you both share in common?",
-    placeholder: "E.g., A love for jazz, both adore dogs, shared travel dreams...",
+    placeholder:
+      "E.g., A love for jazz, both adore dogs, shared travel dreams...",
     field: "sharedInterests",
     examples: [
       "We both adore the same indie band",

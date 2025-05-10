@@ -76,7 +76,7 @@ export default function GenerateLineModal({
     <Modal
       visible={visible}
       transparent
-      animationType='fade'
+      animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent={true}
     >
@@ -149,7 +149,7 @@ export default function GenerateLineModal({
                   <TextInput
                     style={styles.input}
                     placeholder={currentStepData.placeholder}
-                    placeholderTextColor='#999'
+                    placeholderTextColor="#999"
                     multiline
                     value={
                       formData[currentStepData.field as keyof typeof formData]
@@ -230,22 +230,30 @@ export default function GenerateLineModal({
           <View style={styles.footer}>
             <TouchableOpacity
               style={[
-                globalStyles.button,
-                currentStepData.isInfoOnly == false
-                  ? !formData[currentStepData.field as keyof typeof formData]
-                    ? styles.buttonDisabled
-                    : undefined
-                  : undefined,
+              globalStyles.button,
+              currentStep === 0
+                ? undefined
+                : currentStepData.isInfoOnly == false
+                ? !formData[currentStepData.field as keyof typeof formData]
+                ? styles.buttonDisabled
+                : undefined
+                : undefined,
               ]}
               onPress={handleNext}
               disabled={
-                currentStepData.isInfoOnly == true
-                  ? false
-                  : !formData[currentStepData.field as keyof typeof formData]
+              currentStep === 0
+                ? false
+                : currentStepData.isInfoOnly == true
+                ? false
+                : !formData[currentStepData.field as keyof typeof formData]
               }
             >
               <Text style={globalStyles.buttonText}>
-                {isLastStep ? "Generate Line" : "Next"}
+              {currentStep === 0
+                ? "Let's start"
+                : isLastStep
+                ? "Get your Line"
+                : "Next"}
               </Text>
             </TouchableOpacity>
           </View>

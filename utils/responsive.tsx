@@ -16,5 +16,4 @@ export const normalize = (size: any, factor = 0.5) => {
   }
 };
 
-
 // [ADB] Couldn't reverse port 8081: adb.exe: device still authorizing

@@ -21,27 +21,27 @@ export default function TabsLayout() {
           <BlurView
             intensity={80}
             style={StyleSheet.absoluteFill}
-            tint='light'
+            tint="light"
           />
         ),
       }}
     >
       <Tabs.Screen
-        name='index'
+        name="index"
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name='favourites'
+        name="favourites"
         options={{
           title: "Favourites",
           tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name='settings'
+        name="settings"
         options={{
           title: "Settings",
           tabBarIcon: ({ color, size }) => (

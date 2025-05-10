@@ -18,6 +18,8 @@ import Animated, {
 import { Copy, Share2, Trash2 } from "lucide-react-native";
 import { Colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
+import { normalize } from "@/utils/responsive";
+import { globalStyles } from "@/constants/globalStyles";
 
 const { width } = Dimensions.get("window");
 
@@ -52,7 +54,7 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
 
   const renderRightActions = () => {
     return (
-      <View style={styles.rightActions}>
+      <View style={globalStyles.actionButton}>
         <TouchableOpacity
           style={[styles.actionButton, { backgroundColor: Colors.shyBlue }]}
           onPress={handleCopy}
@@ -106,8 +108,8 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
                       line.category === "flirty"
                         ? Colors.flirtyPink
                         : line.category === "shy"
-                        ? Colors.shyBlue
-                        : Colors.wittyGreen,
+                          ? Colors.shyBlue
+                          : Colors.wittyGreen,
                   },
                 ]}
               >
@@ -130,12 +132,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightText,
     marginHorizontal: 20,
     marginVertical: 8,
-    borderRadius: 15,
+    borderRadius: normalize(5),
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 3,
+    elevation: 0,
   },
   content: {
     padding: 16,
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   categoryTag: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 5,
   },
   categoryText: {
     ...Fonts.small,

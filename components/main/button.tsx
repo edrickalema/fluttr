@@ -14,7 +14,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-
 import { Fonts } from "@/constants/fonts";
 import { Colors } from "@/constants/colors";
 
@@ -50,7 +49,7 @@ const AnimatedButton = ({
   const handlePressOut = () => {
     scale.value = withSequence(
       withTiming(1.05, { duration: 100 }),
-      withTiming(1, { duration: 100 })
+      withTiming(1, { duration: 100 }),
     );
   };
 

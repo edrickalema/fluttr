@@ -103,7 +103,7 @@ export const globalStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 3,
+    elevation: 1,
     marginBottom: normalize(15),
     padding: normalize(20),
   },

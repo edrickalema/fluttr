@@ -27,7 +27,7 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
         <Slot />
-        <StatusBar style='auto' />
+        <StatusBar style="auto" />
       </Stack>
     </GestureHandlerRootView>
   );
