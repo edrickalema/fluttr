@@ -34,10 +34,10 @@ export default function WelcomeScreen() {
     heartScale.value = withRepeat(
       withSequence(
         withTiming(1.1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) })
+        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
       ),
       -1, // Infinite repeat
-      true // Reverse
+      true, // Reverse
     );
     setTimeout(() => {
       buttonSlideUp.value = withTiming(0, { duration: 300 });
@@ -64,28 +64,27 @@ export default function WelcomeScreen() {
 
   return (
     <View style={[globalStyles.container, styles.container]}>
-      <LottieView
-        source={Images.heart}
-        autoPlay
-        loop
-        style={styles.heartAnimation}
-      />
       <LinearGradient
         colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
         style={styles.gradient}
       >
         <Animated.View style={[styles.content, contentStyle]}>
-          {/* <Animated.View
-            style={[styles.heartContainer, heartContainerStyle]}
-          ></Animated.View> */}
-          <Text style={styles.title}>Welcome to Fluttr</Text>
+          <Animated.View style={[styles.heartContainer, heartContainerStyle]}>
+            <LottieView
+              source={Images.heart}
+              autoPlay
+              loop
+              style={styles.heartAnimation}
+            />
+          </Animated.View>
+          <Text style={styles.title}>Fluttr</Text>
           <Text style={styles.subtitle}>
             Discover smarter ways to connect and make every conversation count
           </Text>
 
           <Animated.View style={buttonStyle}>
             <AnimatedButton
-              title='Get Started'
+              title="Get Started"
               onPress={handleNext}
               style={styles.button}
             />
@@ -106,6 +105,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     padding: 20,
+    borderRadius: 20,
   },
   content: {
     alignItems: "center",

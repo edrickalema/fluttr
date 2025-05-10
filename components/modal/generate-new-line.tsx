@@ -230,30 +230,30 @@ export default function GenerateLineModal({
           <View style={styles.footer}>
             <TouchableOpacity
               style={[
-              globalStyles.button,
-              currentStep === 0
-                ? undefined
-                : currentStepData.isInfoOnly == false
-                ? !formData[currentStepData.field as keyof typeof formData]
-                ? styles.buttonDisabled
-                : undefined
-                : undefined,
+                globalStyles.button,
+                currentStep === 0
+                  ? undefined
+                  : currentStepData.isInfoOnly == false
+                    ? !formData[currentStepData.field as keyof typeof formData]
+                      ? styles.buttonDisabled
+                      : undefined
+                    : undefined,
               ]}
               onPress={handleNext}
               disabled={
-              currentStep === 0
-                ? false
-                : currentStepData.isInfoOnly == true
-                ? false
-                : !formData[currentStepData.field as keyof typeof formData]
+                currentStep === 0
+                  ? false
+                  : currentStepData.isInfoOnly == true
+                    ? false
+                    : !formData[currentStepData.field as keyof typeof formData]
               }
             >
               <Text style={globalStyles.buttonText}>
-              {currentStep === 0
-                ? "Let's start"
-                : isLastStep
-                ? "Get your Line"
-                : "Next"}
+                {currentStep === 0
+                  ? "Let's start"
+                  : isLastStep
+                    ? "Get your Line"
+                    : "Next"}
               </Text>
             </TouchableOpacity>
           </View>
