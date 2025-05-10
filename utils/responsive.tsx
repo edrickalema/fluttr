@@ -15,3 +15,6 @@ export const normalize = (size: any, factor = 0.5) => {
     return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
   }
 };
+
+
+// [ADB] Couldn't reverse port 8081: adb.exe: device still authorizing

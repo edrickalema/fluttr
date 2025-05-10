@@ -11,6 +11,13 @@ export const globalStyles = StyleSheet.create({
     paddingHorizontal: normalize(16),
     paddingTop: normalize(20),
   },
+  headerGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  },
 
   // Title Style
   title: {
@@ -39,7 +46,7 @@ export const globalStyles = StyleSheet.create({
   buttonText: {
     color: Colors.buttonText,
     fontWeight: "600",
-      ...Fonts.button,
+    ...Fonts.button,
   },
 
   // Header style

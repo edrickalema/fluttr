@@ -5,6 +5,7 @@ import { Fonts } from "@/constants/fonts";
 import { globalStyles } from "@/constants/globalStyles";
 import { normalize } from "@/utils/responsive";
 import * as Clipboard from "expo-clipboard";
+import { LinearGradient } from "expo-linear-gradient";
 import { Copy, Heart, Share2, Sparkles } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -64,6 +65,10 @@ export default function Home() {
 
   return (
     <ScrollView contentContainerStyle={globalStyles.container}>
+      <LinearGradient
+        colors={[Colors.gradientPinkStart, "transparent"]}
+        style={globalStyles.headerGradient}
+      />
       <View style={[styles.homeHeader]}>
         <View style={{ flex: 1 }}>
           <Text

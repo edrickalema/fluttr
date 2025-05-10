@@ -7,6 +7,7 @@ import {
 import { Slot, SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
@@ -23,9 +24,11 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
   return (
-    <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
-      <Slot />
-      <StatusBar style='auto' />
-    </Stack>
+    <GestureHandlerRootView>
+      <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
+        <Slot />
+        <StatusBar style='auto' />
+      </Stack>
+    </GestureHandlerRootView>
   );
 }
