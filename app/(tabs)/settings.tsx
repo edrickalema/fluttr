@@ -26,7 +26,7 @@ import {
 } from "react-native";
 import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
 // import { getSelectedTone } from "@/utils/storage";
-
+import { useRouter } from "expo-router";
 interface SettingItemProps {
   icon: React.ReactNode;
   title: string;
@@ -39,6 +39,8 @@ interface SettingItemProps {
 }
 
 export default function SettingsScreen() {
+  // Router
+  const router = useRouter();
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
 
@@ -180,13 +182,17 @@ export default function SettingsScreen() {
             subtitle: selectedTone
               ? selectedTone.charAt(0).toUpperCase() + selectedTone.slice(1)
               : "Default",
-            onPress: () => {},
+            onPress: () => {
+              router.push("/conversation-style");
+            },
           })}
           {renderSettingItem({
             icon: <Palette size={24} color={Colors.shyBlue} />,
             title: "Appearance",
             subtitle: "Customize your app theme",
-            onPress: () => {},
+            onPress: () => {
+              router.push("/appearance-screen");
+            },
           })}
         </View>
 
@@ -197,14 +203,18 @@ export default function SettingsScreen() {
             title: "Privacy Settings",
             subtitle: "",
             onToggle: undefined,
-            onPress: () => {},
+            onPress: () => {
+              router.push("/(screens)/demo-screen");
+            },
           })}
           {renderSettingItem({
             icon: <History size={24} color={Colors.darkText} />,
             title: "Clear History",
             subtitle: "",
             onToggle: undefined,
-            onPress: () => {},
+            onPress: () => {
+              router.push("/(screens)/demo-call");
+            },
           })}
         </View>
 
