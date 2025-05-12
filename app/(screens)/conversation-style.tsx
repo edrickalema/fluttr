@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Colors } from "@/constants/colors";
+import { Fonts } from "@/constants/fonts";
+import { normalize } from "@/utils/responsive";
 import { useRouter } from "expo-router";
+import { ChevronLeft } from "lucide-react-native";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeIn,
   SlideInRight,
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { ChevronLeft } from "lucide-react-native";
-import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 
 type ConversationStyle = "playful" | "romantic" | "bold" | "shy";
 
@@ -53,7 +54,7 @@ export default function ConversationStyleScreen() {
     useState<ConversationStyle>("playful");
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Animated.View entering={FadeIn.duration(500)} style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -90,7 +91,7 @@ export default function ConversationStyleScreen() {
           <Text style={styles.saveButtonText}>Save Preference</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cream,
   },
   header: {
-    paddingTop: 60,
+    paddingTop: normalize(60),
     paddingHorizontal: 20,
     paddingBottom: 20,
   },

@@ -1,22 +1,19 @@
-import AnimatedButton from "@/components/main/button";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  withDelay,
+} from "react-native-reanimated";
+import { MessageCircle } from "lucide-react-native";
 import { Colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
-import { globalStyles } from "@/constants/globalStyles";
-import { normalize } from "@/utils/responsive";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import LottieView from "lottie-react-native";
-import React, { useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
-import { Images } from "../constants/images"; // Adjusted the path to match the correct relative location
+import AnimatedButton from "@/components/main/button";
+import { normalize } from "@/utils/responsive";
 
 const { width, height } = Dimensions.get("window");
 
@@ -25,71 +22,80 @@ export default function WelcomeScreen() {
 
   // Animation values
   const fadeIn = useSharedValue(0);
-  const heartScale = useSharedValue(1);
-  const buttonSlideUp = useSharedValue(50);
+  const slideUp = useSharedValue(50);
+  const iconScale = useSharedValue(0.8);
 
   useEffect(() => {
     // Start animations when component mounts
-    fadeIn.value = withTiming(1, { duration: 500 });
-    heartScale.value = withRepeat(
+    fadeIn.value = withTiming(1, { duration: 800 });
+    slideUp.value = withTiming(0, { duration: 800 });
+    iconScale.value = withDelay(
+      400,
       withSequence(
-        withTiming(1.1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
-      ),
-      -1, // Infinite repeat
-      true, // Reverse
+        withTiming(1.2, { duration: 400 }),
+        withTiming(1, { duration: 200 })
+      )
     );
-    setTimeout(() => {
-      buttonSlideUp.value = withTiming(0, { duration: 300 });
-    }, 500);
   }, []);
 
   // Animated styles
   const contentStyle = useAnimatedStyle(() => ({
     opacity: fadeIn.value,
+    transform: [{ translateY: slideUp.value }],
   }));
 
-  const heartContainerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: heartScale.value }],
-  }));
-
-  const buttonStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: buttonSlideUp.value }],
-    opacity: fadeIn.value,
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
   }));
 
   const handleNext = () => {
-    router.push("/(tabs)");
+    router.push("/");
   };
 
   return (
-    <View style={[globalStyles.container, styles.container]}>
+    <View style={styles.container}>
       <LinearGradient
         colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
         style={styles.gradient}
       >
-        <Animated.View style={[styles.content, contentStyle]}>
-          <Animated.View style={[styles.heartContainer, heartContainerStyle]}>
-            <LottieView
-              source={Images.heart}
-              autoPlay
-              loop
-              style={styles.heartAnimation}
-            />
+        <View style={styles.content}>
+          <Animated.View style={[styles.iconContainer, iconStyle]}>
+            <MessageCircle size={48} color={Colors.flirtyPink} />
           </Animated.View>
-          <Text style={styles.title}>Fluttr</Text>
-          <Text style={styles.subtitle}>
-            Discover smarter ways to connect and make every conversation count
-          </Text>
 
-          <Animated.View style={buttonStyle}>
-            <AnimatedButton
-              title="Get Started"
-              onPress={handleNext}
-              style={styles.button}
-            />
+          <Animated.View style={[styles.textContainer, contentStyle]}>
+            <Text style={styles.title}>
+              Less Awkward Texts,{"\n"}
+              <Text style={styles.highlightText}>More{"\n"}Romance!</Text>
+            </Text>
+
+            <Text style={styles.subtitle}>
+              Discover meaningful connections{"\n"}
+              with Fluttr, where romance begins.
+            </Text>
+
+            <View style={styles.codeContainer}>
+                <Text style={styles.codeText}>Your journey starts here!</Text>
+            </View>
           </Animated.View>
-        </Animated.View>
+
+          <View style={styles.buttonContainer}>
+            <AnimatedButton
+              title='Continue'
+              onPress={handleNext}
+              style={styles.continueButton}
+            />
+
+            <AnimatedButton
+              title='Join waitlist'
+              onPress={() => {}}
+              style={styles.waitlistButton}
+              textStyle={styles.waitlistButtonText}
+            />
+
+            <Text style={styles.memberText}>I'm already a member</Text>
+          </View>
+        </View>
       </LinearGradient>
     </View>
   );
@@ -99,50 +105,87 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width,
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    marginBottom: normalize(20),
   },
   gradient: {
-    padding: 20,
-    borderRadius: 20,
+    flex: 1,
+    backgroundColor: Colors.lightText,
   },
   content: {
-    alignItems: "center",
-    width: "100%",
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    alignItems: "flex-start",
   },
-  heartContainer: {
-    width: 120,
-    height: 120,
-    marginBottom: 40,
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: Colors.lightText,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 32,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  heartAnimation: {
-    width: 120,
-    height: 120,
+  textContainer: {
+    alignSelf: "stretch",
+    marginBottom: 40,
   },
   title: {
     ...Fonts.heading,
-    color: Colors.lightText,
-    textAlign: "center",
-    marginBottom: 16,
+    fontSize: normalize(40),
+    lineHeight: 48,
+    color: Colors.darkText,
+    marginBottom: 24,
+  },
+  highlightText: {
+    color: Colors.flirtyPink,
   },
   subtitle: {
     ...Fonts.body,
-    color: Colors.lightText,
-    textAlign: "center",
-    marginBottom: 40,
+    fontSize:  normalize(18),
+    color: Colors.mediumText,
+    marginBottom: 24,
   },
-  button: {
-    backgroundColor: Colors.buttonBackground,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
+  codeContainer: {
+    backgroundColor: Colors.cream,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  codeText: {
+    ...Fonts.heading,
+    fontSize: 20,
+    color: Colors.darkText,
+    letterSpacing: 1,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 50,
+    left: 24,
+    right: 24,
+    alignItems: "center",
+  },
+  continueButton: {
+    width: "100%",
+    backgroundColor: Colors.flirtyPink,
+    marginBottom: 12,
+  },
+  waitlistButton: {
+    width: "100%",
+    backgroundColor: Colors.cream,
+    marginBottom: 20,
+  },
+  waitlistButtonText: {
+    color: Colors.darkText,
+  },
+  memberText: {
+    ...Fonts.body,
+    color: Colors.mediumText,
+    textDecorationLine: "underline",
   },
 });
