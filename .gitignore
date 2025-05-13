@@ -38,3 +38,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+# Android
+# build/
+/android

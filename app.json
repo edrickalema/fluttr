@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/fluttr_icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.x19alema.Fluttr"
     },
     "web": {
       "bundler": "metro",
