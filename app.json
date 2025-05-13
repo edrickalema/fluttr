@@ -17,7 +17,17 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.x19alema.Fluttr"
+      "package": "com.x19alema.Fluttr",
+      "permissions": [
+        "INTERNET",
+        "READ_EXTERNAL_STORAGE",
+        "SYSTEM_ALERT_WINDOW",
+        "BIND_NOTIFICATION_LISTENER_SERVICE",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE",
+        "BIND_NOTIFICATION_LISTENER_SERVICE",
+        "FOREGROUND_SERVICE"
+      ]
     },
     "web": {
       "bundler": "metro",

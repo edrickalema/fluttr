@@ -3,6 +3,7 @@ import GenerateLineModal from "@/components/modal/generate-new-line";
 import { Colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import { globalStyles } from "@/constants/globalStyles";
+import { useNotificationListener } from "@/hooks/useNotificationListener";
 import { normalize } from "@/utils/responsive";
 import * as Clipboard from "expo-clipboard";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,6 +20,7 @@ import {
 
 export default function Home() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { notifications, requestPermission } = useNotificationListener();
 
   const [lines] = useState([
     {
@@ -79,6 +81,7 @@ export default function Home() {
           >
             Hey!, Alema
           </Text>
+
           <Text
             style={StyleSheet.flatten([
               globalStyles.text,
@@ -92,7 +95,8 @@ export default function Home() {
 
         <TouchableOpacity
           style={styles.sparkleBox}
-          onPress={generateNewPickupLine}
+          // onPress={generateNewPickupLine}
+          onPress={requestPermission}
         >
           <Sparkles
             size={normalize(30)}
@@ -105,6 +109,13 @@ export default function Home() {
       <Text style={StyleSheet.flatten([styles.sectionTitle, Fonts.heading])}>
         Today's Picks
       </Text>
+
+      {/* Testing */}
+      {notifications.map((notif, index) => (
+        <Text key={index}>
+          {notif.packageName}: {notif.title} - {notif.text}
+        </Text>
+      ))}
 
       <View style={styles.cardsContainer}>
         {lines.map((line, index) => (
