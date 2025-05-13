@@ -49,7 +49,7 @@ export default function WelcomeScreen() {
   }));
 
   const handleNext = () => {
-    router.push("/");
+    router.push("/(onboarding)/purpose");
   };
 
   return (
