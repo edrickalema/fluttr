@@ -27,6 +27,7 @@ import {
 import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
 // import { getSelectedTone } from "@/utils/storage";
 import { useRouter } from "expo-router";
+import { useAssistant } from "@/context/AssitantContext";
 interface SettingItemProps {
   icon: React.ReactNode;
   title: string;
@@ -43,6 +44,9 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
+
+  const { isAssistantEnabled, toggleAssistantEnabled } = useAssistant();
+
 
   // Feature toggles
   const [smartAssistant, setSmartAssistant] = useState(true);

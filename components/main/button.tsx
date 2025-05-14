@@ -14,8 +14,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Fonts } from "@/constants/fonts";
 import { Colors } from "@/constants/colors";
+import { Fonts } from "@/constants/fonts";
 
 interface AnimatedButtonProps {
   title: string;
@@ -49,7 +49,7 @@ const AnimatedButton = ({
   const handlePressOut = () => {
     scale.value = withSequence(
       withTiming(1.05, { duration: 100 }),
-      withTiming(1, { duration: 100 }),
+      withTiming(1, { duration: 100 })
     );
   };
 
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.buttonBackground,
     alignItems: "center",
     justifyContent: "center",
+    minWidth: "100%",
   },
   buttonText: {
     ...Fonts.button,

@@ -1,6 +1,7 @@
 export const Colors = {
   // Primary pastel colors
-  pink: "#FFCCCB",
+  // pink: "#FFCCCB",
+  pink: "#FF4785",
   lavender: "#E6E6FA",
   peach: "#FFE5B4",
   cream: "#FFF5E6",
@@ -23,8 +24,14 @@ export const Colors = {
   paginationInactive: "#E0E0E0",
 
   // Gradient colors
-  gradientPinkStart: "#FFCCCB",
+  gradientPinkStart: "#FF4785",
   gradientPinkEnd: "#E6E6FA",
   gradientPeachStart: "#FFCCCB",
   gradientPeachEnd: "#FFE5B4",
+
+
+  white: "#FFFFFF",
+  graywhite:"#F8F8F8",
+  gray: "#E0E0E0",
+  lightGray: "#F0F0F0",
 };

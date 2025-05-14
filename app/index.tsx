@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  withDelay,
-} from "react-native-reanimated";
-import { MessageCircle } from "lucide-react-native";
+import AnimatedButton from "@/components/main/button";
 import { Colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
-import { useRouter } from "expo-router";
-import AnimatedButton from "@/components/main/button";
 import { normalize } from "@/utils/responsive";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { MessageCircle } from "lucide-react-native";
+import React, { useEffect } from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -75,25 +75,25 @@ export default function WelcomeScreen() {
             </Text>
 
             <View style={styles.codeContainer}>
-                <Text style={styles.codeText}>Your journey starts here!</Text>
+              <Text style={styles.codeText}>Your journey starts here!</Text>
             </View>
           </Animated.View>
 
           <View style={styles.buttonContainer}>
             <AnimatedButton
-              title='Continue'
+              title='Get Started'
               onPress={handleNext}
               style={styles.continueButton}
             />
 
-            <AnimatedButton
+            {/* <AnimatedButton
               title='Join waitlist'
               onPress={() => {}}
               style={styles.waitlistButton}
               textStyle={styles.waitlistButtonText}
             />
 
-            <Text style={styles.memberText}>I'm already a member</Text>
+            <Text style={styles.memberText}>I'm already a member</Text> */}
           </View>
         </View>
       </LinearGradient>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: Colors.lightText,
+    backgroundColor: Colors.cream,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 32,
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Fonts.body,
-    fontSize:  normalize(18),
+    fontSize: normalize(18),
     color: Colors.mediumText,
     marginBottom: 24,
   },
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     width: "100%",
-    backgroundColor: Colors.flirtyPink,
+    backgroundColor: Colors.pink,
     marginBottom: 12,
   },
   waitlistButton: {

@@ -1,3 +1,4 @@
+import { AssistantProvider } from "@/context/AssitantContext";
 import {
   Poppins_400Regular,
   Poppins_600SemiBold,
@@ -24,11 +25,13 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
   return (
-    <GestureHandlerRootView>
-      <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
-        <Slot />
-        <StatusBar style="auto" />
-      </Stack>
-    </GestureHandlerRootView>
+    <AssistantProvider>
+      <GestureHandlerRootView>
+        <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
+          <Slot />
+          <StatusBar style='auto' />
+        </Stack>
+      </GestureHandlerRootView>
+    </AssistantProvider>
   );
 }
