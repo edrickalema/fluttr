@@ -1,4 +1,5 @@
 import LottieView from "lottie-react-native";
+import { MessageCircleCode } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -98,7 +99,12 @@ const FloatingAssistantBubble: React.FC<FloatingAssistantBubbleProps> = ({
         onPress={onOpenAssistant}
         activeOpacity={0.8}
       >
-        <LottieView source={require("../../assets/animations/heart.json")} autoPlay loop/>
+        <MessageCircleCode size={32} color='#FFFFFF' />
+        <LottieView
+          source={require("../../assets/animations/heart.json")}
+          autoPlay
+          loop
+        />
       </TouchableOpacity>
     </Animated.View>
   );

@@ -8,7 +8,7 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.cream,
-    paddingHorizontal: normalize(16),
+    paddingHorizontal: normalize(0),
     paddingTop: normalize(20),
   },
   headerGradient: {

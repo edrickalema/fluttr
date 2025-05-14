@@ -1,325 +1,323 @@
 // CallAssistantScreen.tsx
+import { AudioWaveform } from "@/components/animation/audio-wave";
+import { FloatingActionButton } from "@/components/assistance/call/FloatingActionButton";
+import { SuggestionBubble } from "@/components/assistance/call/SuggestionBubble";
+import { TranscriptionList } from "@/components/assistance/call/TranscriptionList";
+import { Colors } from "@/constants/colors";
+import { Fonts } from "@/constants/fonts";
+import { useCallAssistant } from "@/context/CallAssitantContext";
+import { normalize } from "@/utils/responsive";
+
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Speech from "expo-speech";
-import React, { useEffect, useState } from "react";
+import { useNavigation } from "expo-router";
+import LottieView from "lottie-react-native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  Dimensions,
+  KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
-  Vibration,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import useCallAssistant from "../hooks/useCallAssistant";
-import ManualInputPanel from "@/components/assistance/manulInputPanel";
-import { Fonts } from "@/constants/fonts";
-import useCallAssistant from "@/hooks/useCallAssistant";
-import useSuggestionEngine from "@/hooks/useSuggestionEngine";
-import { Keyboard, Mic } from "lucide-react-native";
 
-interface SuggestionProps {
-  text: string;
-  type: "icebreaker" | "response" | "question" | "compliment";
-  onPress: () => void;
-}
-
-// Animated suggestion bubble that appears with a subtle animation
-const SuggestionBubble: React.FC<SuggestionProps> = ({
-  text,
-  type,
-  onPress,
-}) => {
-  const scaleAnim = React.useRef(new Animated.Value(0.5)).current;
-  const opacityAnim = React.useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 6,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
-
-  // Get icon and color based on suggestion type
-  const getTypeDetails = () => {
-    switch (type) {
-      case "icebreaker":
-        return { icon: "snowflake-outline", color: "#007AFF" };
-      case "response":
-        return { icon: "chatbubble-outline", color: "#FF2D55" };
-      case "question":
-        return { icon: "help-circle-outline", color: "#5856D6" };
-      case "compliment":
-        return { icon: "heart-outline", color: "#FF9500" };
-      default:
-        return { icon: "bulb-outline", color: "#34C759" };
-    }
-  };
-
-  const { icon, color } = getTypeDetails();
-
-  return (
-    <Animated.View
-      style={[
-        styles.suggestionContainer,
-        {
-          transform: [{ scale: scaleAnim }],
-          opacity: opacityAnim,
-        },
-      ]}
-    >
-      <TouchableOpacity
-        style={[styles.suggestionBubble, { borderColor: color }]}
-        onPress={onPress}
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          // @ts-ignore
-          name={icon}
-          size={16}
-          color={color}
-          style={styles.suggestionIcon}
-        />
-        <Text style={styles.suggestionText}>{text}</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
-
-// Floating transcription display that shows what's being said
-const TranscriptionDisplay: React.FC<{ text: string; partialText: string }> = ({
-  text,
-  partialText,
-}) => {
-  return (
-    <View style={styles.transcriptionContainer}>
-      <ScrollView
-        style={styles.transcriptionScroll}
-        contentContainerStyle={styles.transcriptionContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {text ? <Text style={styles.transcriptionText}>{text}</Text> : null}
-        {partialText ? (
-          <Text style={styles.partialTranscriptionText}>{partialText}</Text>
-        ) : null}
-      </ScrollView>
-    </View>
-  );
-};
-
+const { width, height } = Dimensions.get("window");
 const CallAssistantScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
-  const [showTranscript, setShowTranscript] = useState(true);
-  const [showHelp, setShowHelp] = useState(false);
-  const [manualInputMode, setManualInputMode] = useState(false);
-
-  // Hook into our custom speech recognition and suggestion systems
+  const navigation = useNavigation();
   const {
+    isActive,
+    startAssistant,
+    stopAssistant,
+    suggestions,
+    transcriptions,
     isListening,
-    transcript,
-    partialTranscript,
-    startListening,
-    stopListening,
+    addManualTranscription,
   } = useCallAssistant();
 
-  const { suggestions, isLoading, generateSuggestions } = useSuggestionEngine();
+  const [manualInput, setManualInput] = useState("");
+  const [showInput, setShowInput] = useState(false);
+  const [speakerType, setSpeakerType] = useState<"self" | "other">("other");
 
-  // When new suggestions arrive, trigger haptic feedback
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(height)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const animationRef = useRef<LottieView>(null);
+
   useEffect(() => {
-    if (suggestions.length > 0) {
-      if (Platform.OS === "ios") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } else {
-        // Android vibration pattern
-        Vibration.vibrate([0, 50, 30, 50]);
-      }
-    }
-  }, [suggestions]);
+    if (isActive) {
+      // Animate in
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-  const toggleListening = () => {
-    if (isListening) {
-      stopListening();
+      // Start pulse animation
+      startPulseAnimation();
     } else {
-      startListening();
+      // Animate out
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: height,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isActive]);
+
+  useEffect(() => {
+    if (isListening && animationRef.current) {
+      animationRef.current.play();
+    } else if (animationRef.current) {
+      animationRef.current.pause();
+    }
+  }, [isListening]);
+
+  const startPulseAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.05,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
+  const handleManualSubmit = () => {
+    if (manualInput.trim()) {
+      addManualTranscription(manualInput.trim(), speakerType === "self");
+      setManualInput("");
     }
   };
 
-  const handleSuggestionPress = (text: string) => {
-    // Copy to clipboard or speak it out loud softly
-    Speech.speak(text, {
-      rate: 0.8,
-      pitch: 1.0,
-      volume: 0.5,
-    });
-
-    // Could add additional handling here
-  };
-
-  const toggleTranscriptView = () => {
-    setShowTranscript(!showTranscript);
-  };
-
-  return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LinearGradient
-        colors={["rgba(20, 20, 30, 0.95)", "rgba(30, 30, 45, 0.9)"]}
-        style={styles.background}
-      />
-
-      {/* Header with control buttons */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={() => setShowHelp(!showHelp)}
+  if (!isActive) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LinearGradient
+          colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
+          style={[styles.gradient, { opacity: 0.98 }]}
         >
-          <Ionicons name='help-circle-outline' size={24} color='#fff' />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              if (navigation?.goBack) {
+                navigation.goBack();
+              }
+            }}
+          >
+            <Ionicons
+              name='chevron-back'
+              size={28}
+              color={Colors.gradientPinkStart}
+            />
+          </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Call Assistant</Text>
-
-        <TouchableOpacity
-          style={styles.headerButton}
-          onPress={toggleTranscriptView}
-        >
-          <Ionicons
-            name={showTranscript ? "eye-outline" : "eye-off-outline"}
-            size={24}
-            color='#fff'
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Help overlay - conditionally rendered */}
-      {showHelp && (
-        <View style={styles.helpOverlay}>
-          <View style={styles.helpContainer}>
-            <Text style={styles.helpTitle}>How to use Call Assistant</Text>
-            <Text style={styles.helpText}>
-              • Place your phone on speaker while talking to your date
-            </Text>
-            <Text style={styles.helpText}>
-              • I'll listen and give you smooth conversation suggestions
-            </Text>
-            <Text style={styles.helpText}>
-              • Tap any suggestion to have it softly whispered to you
-            </Text>
-            <Text style={styles.helpText}>
-              • Tap the mic button to start/stop listening
-            </Text>
-            <TouchableOpacity
-              style={styles.helpCloseButton}
-              onPress={() => setShowHelp(false)}
+          <View style={styles.welcomeContainer}>
+            <Text
+              style={StyleSheet.compose(styles.welcomeTitle, Fonts.subheading)}
             >
-              <Text style={styles.helpCloseButtonText}>Got it</Text>
+              Fluttr Call Assistant
+            </Text>
+            <Text style={StyleSheet.compose(styles.welcomeText, Fonts.body)}>
+              Get real-time tips and conversation starters during your calls or
+              live dates. Fluttr Call Assistant helps you feel confident and
+              make every moment count.
+            </Text>
+            <LottieView
+              source={require("../../assets/animations/heart.json")}
+              style={styles.welcomeAnimation}
+              autoPlay
+              loop
+            />
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={startAssistant}
+            >
+              <LinearGradient
+                colors={[Colors.gradientPinkStart, Colors.peach]}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.startButtonText}>Start Call Assistant</Text>
+                <MaterialIcons name='keyboard-voice' size={24} color='white' />
+              </LinearGradient>
             </TouchableOpacity>
           </View>
-        </View>
-      )}
+        </LinearGradient>
+      </SafeAreaView>
+    );
+  }
 
-      {/* Main content area */}
-      <View style={styles.content}>
-        {/* Transcription area */}
-        {showTranscript && (
-          <TranscriptionDisplay
-            text={transcript}
-            partialText={partialTranscript}
-          />
-        )}
-
-        {/* Suggestions area */}
-        <View style={styles.suggestionsContainer}>
-          <Text style={styles.suggestionsTitle}>
-            {isLoading === true ? "Thinking..." : "Suggestions"}
-          </Text>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.suggestionsScroll}
-          >
-            <SuggestionBubble
-              text={""}
-              type={"icebreaker"}
-              onPress={function (): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
-            {suggestions.length > 0 ? (
-              suggestions.map((suggestion: any) => (
-                <SuggestionBubble
-                  key={suggestion.id}
-                  text={suggestion.text}
-                  type={suggestion.type}
-                  onPress={() => handleSuggestionPress(suggestion.text)}
-                />
-              ))
-            ) : (
-              <View style={styles.emptySuggestions}>
-                <Text style={styles.emptySuggestionsText}>
-                  {isListening
-                    ? "I'm listening... Suggestions will appear here."
-                    : "Tap the mic to start getting suggestions"}
-                </Text>
-              </View>
-            )}
-          </ScrollView>
-        </View>
-
-        {manualInputMode && (
-          <ManualInputPanel
-            onSubmit={function (text: string): void {
-              throw new Error("Function not implemented.");
-            }}
-            visible={false}
-          />
-        )}
-      </View>
-
-      {/* Control bar at bottom */}
-      <View style={[styles.controlBar, { paddingBottom: insets.bottom + 10 }]}>
-        <TouchableOpacity
-          style={styles.secondaryControlButton}
-          onPress={() => setManualInputMode(!manualInputMode)}
-        >
-          {manualInputMode ? (
-            <Mic size={24} color='#fff' />
-          ) : (
-            <Keyboard size={24} color='#fff' />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
+  return (
+    <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
+        style={[styles.gradient, { opacity: 0.98 }]}
+      >
+        <Animated.View
           style={[
-            styles.mainControlButton,
-            isListening && styles.activeControlButton,
+            styles.assistantContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
           ]}
-          onPress={toggleListening}
         >
-          <Ionicons
-            name={isListening ? "mic" : "mic-outline"}
-            size={32}
-            color='#fff'
-          />
-        </TouchableOpacity>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={stopAssistant}
+            >
+              <MaterialIcons name='close' size={24} color='#FF5F6D' />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Call Assistant</Text>
+            <View style={styles.listeningIndicator}>
+              <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
+                <AudioWaveform isActive={true} />
+              </Animated.View>
+              <Text style={styles.listeningText}>
+                {isListening ? "Listening..." : "Paused"}
+              </Text>
+            </View>
+          </View>
 
-        <TouchableOpacity style={styles.secondaryControlButton}>
-          <MaterialIcons name='speed' size={24} color='#fff' />
-        </TouchableOpacity>
-      </View>
-    </View>
+          {/* Main Content */}
+          <ScrollView
+            style={styles.contentContainer}
+            contentContainerStyle={styles.contentInner}
+          >
+            {/* Transcription List */}
+            <TranscriptionList transcriptions={transcriptions} />
+          </ScrollView>
+
+          {/* Suggestions Container */}
+          <View style={styles.suggestionsContainer}>
+            <Text style={[styles.suggestionsTitle, Fonts.heading]}>
+              Suggestions
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.suggestionsScrollContent}
+            >
+              {suggestions
+                .filter((s: any) => !s.used)
+                .slice(-3)
+                .map((suggestion: any) => (
+                  <SuggestionBubble
+                    key={suggestion.id}
+                    suggestion={suggestion}
+                  />
+                ))}
+              {suggestions.filter((s: any) => !s.used).length === 0 && (
+                <View style={styles.emptySuggestion}>
+                  <Text style={styles.emptySuggestionText}>
+                    Listening for conversation...
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
+          </View>
+
+          {/* Manual Input Area */}
+          {showInput && (
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.inputContainer}
+            >
+              <View style={styles.speakerToggle}>
+                <TouchableOpacity
+                  style={[
+                    styles.speakerButton,
+                    speakerType === "self" && styles.speakerButtonActive,
+                  ]}
+                  onPress={() => setSpeakerType("self")}
+                >
+                  <Text
+                    style={[
+                      styles.speakerButtonText,
+                      speakerType === "self" && styles.speakerButtonTextActive,
+                    ]}
+                  >
+                    Me
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.speakerButton,
+                    speakerType === "other" && styles.speakerButtonActive,
+                  ]}
+                  onPress={() => setSpeakerType("other")}
+                >
+                  <Text
+                    style={[
+                      styles.speakerButtonText,
+                      speakerType === "other" && styles.speakerButtonTextActive,
+                    ]}
+                  >
+                    Them
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.input}
+                  value={manualInput}
+                  onChangeText={setManualInput}
+                  placeholder={`Type what ${
+                    speakerType === "self" ? "you" : "they"
+                  } said...`}
+                  returnKeyType='send'
+                  onSubmitEditing={handleManualSubmit}
+                  blurOnSubmit={false}
+                />
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={handleManualSubmit}
+                >
+                  <Ionicons name='send' size={20} color='white' />
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          )}
+
+          {/* Floating Action Buttons */}
+          <FloatingActionButton
+            showInput={showInput}
+            setShowInput={setShowInput}
+            isListening={isListening}
+          />
+        </Animated.View>
+      </LinearGradient>
+    </SafeAreaView>
   );
 };
 
@@ -327,178 +325,231 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  background: {
+  gradient: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButton: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
+    top: normalize(35),
+    left: normalize(20),
+    zIndex: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    borderRadius: normalize(24),
+    padding: normalize(8),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+
+  welcomeContainer: {
+    width: "90%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 20,
+    padding: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  welcomeTitle: {
+    fontWeight: "bold",
+    color: Colors.gradientPinkStart,
+    marginBottom: 10,
+    textAlign: "center",
+    ...Fonts.subheading,
+  },
+  welcomeText: {
+    ...Fonts.body,
+    color: Colors.darkText,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  welcomeAnimation: {
+    width: 200,
+    height: 200,
+    marginVertical: 20,
+  },
+  startButton: {
+    width: "100%",
+    height: 50,
+    borderRadius: 25,
+    overflow: "hidden",
+    marginTop: 20,
+  },
+  buttonGradient: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  startButtonText: {
+    color: Colors.buttonText,
+    ...Fonts.button,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  assistantContainer: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: Colors.white,
+    borderRadius: 25,
+    overflow: "hidden",
+    padding: 0,
   },
   header: {
+    width: "100%",
+    height: normalize(100),
+    backgroundColor: Colors.white,
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: normalize(20),
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.gray,
   },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
+  closeButton: {
+    width: normalize(36),
+    height: normalize(36),
+    borderRadius: 18,
+    backgroundColor: Colors.lightGray,
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  transcriptionContainer: {
-    flex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 16,
-    marginBottom: 16,
-    padding: 16,
-  },
-  transcriptionScroll: {
-    flex: 1,
-  },
-  transcriptionContent: {
-    paddingBottom: 16,
-  },
-  transcriptionText: {
-    fontSize: 16,
-    color: "#fff",
-    lineHeight: 22,
-  },
-  partialTranscriptionText: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.6)",
-    fontStyle: "italic",
-    lineHeight: 22,
-  },
-  suggestionsContainer: {
-    marginBottom: 16,
-  },
-  suggestionsTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.6)",
-    marginBottom: 8,
-  },
-  suggestionsScroll: {
-    paddingBottom: 8,
-    paddingRight: 16,
-  },
-  suggestionContainer: {
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  suggestionBubble: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-    maxWidth: 280,
-  },
-  suggestionIcon: {
-    marginRight: 8,
-  },
-  suggestionText: {
-    fontSize: 15,
-    color: "#fff",
-    flexShrink: 1,
-  },
-  emptySuggestions: {
-    height: 54,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 16,
-  },
-  emptySuggestionsText: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.4)",
-    fontStyle: "italic",
-  },
-  controlBar: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 16,
-  },
-  mainControlButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#FF2D55",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 24,
-  },
-  activeControlButton: {
-    backgroundColor: "#34C759",
-  },
-  secondaryControlButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  helpOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    zIndex: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  helpContainer: {
-    backgroundColor: "rgba(30, 30, 45, 0.95)",
-    borderRadius: 16,
-    padding: 24,
-    width: "100%",
-    maxWidth: 350,
-    alignItems: "flex-start",
-  },
-  helpTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#fff",
-    marginBottom: 16,
-  },
-  helpText: {
+    color: Colors.gradientPinkStart,
+    fontWeight: "bold",
     ...Fonts.body,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 12,
-    lineHeight: 20,
   },
-  helpCloseButton: {
-    backgroundColor: "#FF2D55",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    alignSelf: "center",
-    marginTop: 16,
+  listeningIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  helpCloseButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+
+  listeningAnimation: {
+    width: normalize(40),
+    height: normalize(40),
+  },
+  listeningText: {
+    color: Colors.mediumText,
+    ...Fonts.small,
+    marginLeft: 5,
+  },
+  contentContainer: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: Colors.graywhite,
+  },
+  contentInner: {
+    padding: 15,
+    paddingBottom: 100,
+  },
+
+  suggestionsContainer: {
+    width: "100%",
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: normalize(60), // More space for bottom elements (like call controls)
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
+    minHeight: normalize(220), // Enough space for at least 2 suggestion cards and buttons
+    maxHeight: "60%", // Avoid taking over the whole screen
+  },
+
+  suggestionsTitle: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.darkText,
+    paddingBottom: normalize(20),
+  },
+  suggestionsScrollContent: {
+    paddingRight: 20,
+  },
+  emptySuggestion: {
+    width: width * 0.8,
+    height: normalize(60),
+    backgroundColor: Colors.lightGray,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  emptySuggestionText: {
+    color: Colors.mediumText,
+    fontStyle: "italic",
+  },
+  inputContainer: {
+    width: "100%",
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 15,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  speakerToggle: {
+    flexDirection: "row",
+    marginBottom: 10,
+    alignSelf: "center",
+  },
+  speakerButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.lightGray,
+    marginHorizontal: 5,
+  },
+  speakerButtonActive: {
+    backgroundColor: Colors.gradientPinkStart,
+  },
+  speakerButtonText: {
+    color: Colors.mediumText,
+    fontWeight: "500",
+  },
+  speakerButtonTextActive: {
+    color: Colors.white,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    height: normalize(50),
+    backgroundColor: Colors.lightGray,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginRight: 10,
+  },
+  sendButton: {
+    width: normalize(45),
+    height: normalize(45),
+    borderRadius: 22.5,
+    backgroundColor: Colors.gradientPinkStart,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

@@ -264,7 +264,8 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 20,
     overflow: "hidden",
-    shadowColor: "#000",
+    backgroundColor: Colors.white,
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -278,22 +279,22 @@ const styles = StyleSheet.create({
   },
   proTitle: {
     ...Fonts.subheading,
-    color: Colors.lightText,
+    color: Colors.white,
     marginTop: 12,
     marginBottom: 8,
   },
   proDescription: {
     ...Fonts.body,
-    color: Colors.lightText,
+    color: Colors.white,
     textAlign: "center",
     marginBottom: 16,
   },
   proButton: {
-    backgroundColor: Colors.lightText,
+    backgroundColor: Colors.white,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.lightText,
+    backgroundColor: Colors.white,
     paddingVertical: 16,
     paddingHorizontal: 20,
     marginBottom: 1,
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   },
   proBadgeText: {
     ...Fonts.small,
-    color: Colors.lightText,
+    color: Colors.white,
     marginLeft: 4,
     fontSize: 10,
   },
@@ -374,3 +375,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+

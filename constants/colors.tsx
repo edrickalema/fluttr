@@ -29,9 +29,20 @@ export const Colors = {
   gradientPeachStart: "#FFCCCB",
   gradientPeachEnd: "#FFE5B4",
 
-
   white: "#FFFFFF",
-  graywhite:"#F8F8F8",
+  graywhite: "#F8F8F8",
   gray: "#E0E0E0",
   lightGray: "#F0F0F0",
+
+  // New additions for uniform design
+  lightBackground: "#FFFFFF", // Main modal/card background
+  borderLight: "#F0F0F0", // Border color for dividers, headers
+  backgroundMuted: "#F5F5F5", // Subtle backgrounds (e.g. close button)
+  placeholder: "#E0E0E0", // For inactive dots, placeholders
+  inputBackground: "#F5F5F5", // Input/text area background
+  textPrimary: "#333333", // Primary readable text
+
+  disabled: "#CCCCCC", // Disabled button states
+
+  black: "#000",
 };

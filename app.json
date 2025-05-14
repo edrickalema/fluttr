@@ -4,9 +4,15 @@
     "slug": "Fluttr",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/fluttr_icon.png",
+    "icon":  "./assets/images/fluttr_icon.png",
+    "splash": {
+      "image": "./assets/images/fluttr_splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "scheme": "fluttr",
     "userInterfaceStyle": "automatic",
+
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true

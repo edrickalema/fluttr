@@ -76,7 +76,7 @@ export default function GenerateLineModal({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType='fade'
       onRequestClose={onClose}
       statusBarTranslucent={true}
     >
@@ -149,7 +149,7 @@ export default function GenerateLineModal({
                   <TextInput
                     style={styles.input}
                     placeholder={currentStepData.placeholder}
-                    placeholderTextColor="#999"
+                    placeholderTextColor='#999'
                     multiline
                     value={
                       formData[currentStepData.field as keyof typeof formData]
@@ -234,26 +234,26 @@ export default function GenerateLineModal({
                 currentStep === 0
                   ? undefined
                   : currentStepData.isInfoOnly == false
-                    ? !formData[currentStepData.field as keyof typeof formData]
-                      ? styles.buttonDisabled
-                      : undefined
-                    : undefined,
+                  ? !formData[currentStepData.field as keyof typeof formData]
+                    ? styles.buttonDisabled
+                    : undefined
+                  : undefined,
               ]}
               onPress={handleNext}
               disabled={
                 currentStep === 0
                   ? false
                   : currentStepData.isInfoOnly == true
-                    ? false
-                    : !formData[currentStepData.field as keyof typeof formData]
+                  ? false
+                  : !formData[currentStepData.field as keyof typeof formData]
               }
             >
               <Text style={globalStyles.buttonText}>
                 {currentStep === 0
                   ? "Let's start"
                   : isLastStep
-                    ? "Get your Line"
-                    : "Next"}
+                  ? "Get your Line"
+                  : "Next"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -272,58 +272,67 @@ const styles = StyleSheet.create({
     margin: 0,
     height: "100%",
   },
+
   modalContainer: {
     width: width * 0.9,
     maxWidth: 400,
-    backgroundColor: Colors.lightText,
-    borderRadius: 20,
+    backgroundColor: Colors.white,
+    borderRadius: normalize(20),
     overflow: "hidden",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
     elevation: 5,
   },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: normalize(15),
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: Colors.borderLight || "#F0F0F0",
   },
+
   closeButton: {
     width: normalize(40),
     height: normalize(40),
     borderRadius: normalize(20),
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.backgroundMuted || "#F5F5F5",
     justifyContent: "center",
     alignItems: "center",
   },
+
   progressContainer: {
     flexDirection: "row",
     gap: normalize(8),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: normalize(10),
   },
+
   progressDot: {
     width: normalize(8),
     height: normalize(8),
     borderRadius: normalize(4),
-    backgroundColor: "#E0E0E0",
+    backgroundColor: Colors.placeholder || "#E0E0E0",
   },
+
   progressDotActive: {
-    backgroundColor: Colors.pink,
     width: normalize(16),
+    backgroundColor: Colors.pink,
   },
+
   content: {
-    minHeight: normalize(0.6),
+    minHeight: normalize(200),
   },
+
   stepContainer: {
     padding: normalize(20),
     alignItems: "center",
   },
+
   iconContainer: {
     width: normalize(60),
     height: normalize(60),
@@ -333,34 +342,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: normalize(20),
   },
+
   stepTitle: {
     ...Fonts.subheading,
     color: Colors.darkText,
     textAlign: "center",
     marginBottom: normalize(10),
   },
+
   stepDescription: {
     ...Fonts.body,
     color: Colors.mediumText,
     textAlign: "center",
     marginBottom: normalize(20),
   },
+
   input: {
     width: "100%",
     minHeight: normalize(100),
-    backgroundColor: "#F5F5F5",
+    backgroundColor: Colors.inputBackground || "#F5F5F5",
     borderRadius: normalize(15),
     padding: normalize(15),
     ...Fonts.body,
+    color: Colors.textPrimary,
     textAlignVertical: "top",
   },
+
   footer: {
     padding: normalize(20),
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: Colors.borderLight || "#F0F0F0",
   },
 
   buttonDisabled: {
-    backgroundColor: "#CCCCCC",
+    backgroundColor: Colors.disabled || "#CCCCCC",
   },
 });

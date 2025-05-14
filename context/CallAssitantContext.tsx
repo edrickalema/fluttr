@@ -4,142 +4,353 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  useRef,
 } from "react";
-import { AppState, AppStateStatus } from "react-native";
-// import * as Permissions from "expo-permissions";
 import { Audio } from "expo-av";
+import * as Speech from "expo-speech";
+// Removed: import * as Permissions from "expo-permissions";
+import { Vibration } from "react-native";
+import * as FileSystem from "expo-file-system";
 
-// Define the shape of our context
-interface CallAssistantContextProps {
+// Mock AI service for generating suggestions
+// In production, this would connect to your Groq/GPT backend
+const mockAIService = {
+  generateSuggestion: async (transcription: string): Promise<string> => {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    // Basic keyword matching for demo purposes
+    if (transcription.includes("weekend") || transcription.includes("plans")) {
+      return "Maybe suggest a picnic at the park this weekend? The weather should be perfect!";
+    } else if (
+      transcription.includes("movie") ||
+      transcription.includes("film")
+    ) {
+      return "I've been wanting to see that new romantic comedy everyone's talking about. Would you be interested?";
+    } else if (
+      transcription.includes("dinner") ||
+      transcription.includes("eat")
+    ) {
+      return "I know this cozy little Italian place with the most amazing pasta. We could go there sometime?";
+    } else if (
+      transcription.includes("music") ||
+      transcription.includes("song")
+    ) {
+      return "What kind of music do you enjoy listening to? I'd love to make you a playlist sometime.";
+    } else if (
+      transcription.includes("work") ||
+      transcription.includes("job")
+    ) {
+      return "That sounds challenging! What do you enjoy most about what you do?";
+    } else if (
+      transcription.includes("hobby") ||
+      transcription.includes("free time")
+    ) {
+      return "I've been getting into photography lately. It's so rewarding to capture beautiful moments.";
+    } else if (transcription.toLowerCase().includes("how are you")) {
+      return "You might say: I'm doing really well today, especially now that I'm talking to you!";
+    } else if (transcription.length < 15) {
+      return "Ask them about their passions! What excites them most in life?";
+    } else {
+      const fallbacks = [
+        "Maybe ask about their favorite travel destination?",
+        "Try complimenting something specific you noticed about them",
+        "Share something that made you smile today",
+        "Ask what they're looking forward to this week",
+        "Find a common interest you both enjoy",
+      ];
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+  },
+};
+
+// Types
+export type TranscriptionSegment = {
+  text: string;
+  isSelf: boolean;
+  timestamp: number;
+};
+
+export type Suggestion = {
+  id: string;
+  text: string;
+  timestamp: number;
+  used: boolean;
+};
+
+type CallAssistantContextType = {
   isActive: boolean;
-  hasPermissions: boolean;
-  isInForeground: boolean;
-  activateAssistant: () => Promise<void>;
-  deactivateAssistant: () => void;
-  checkPermissions: () => Promise<boolean>;
-  requestPermissions: () => Promise<boolean>;
-}
+  startAssistant: () => Promise<void>;
+  stopAssistant: () => void;
+  transcriptions: TranscriptionSegment[];
+  suggestions: Suggestion[];
+  markSuggestionAsUsed: (id: string) => void;
+  lastTranscriptionText: string;
+  isListening: boolean;
+  addManualTranscription: (text: string, isSelf: boolean) => void;
+};
 
-// Create the context with a default value
-const CallAssistantContext = createContext<CallAssistantContextProps>({
-  isActive: false,
-  hasPermissions: false,
-  isInForeground: true,
-  activateAssistant: async () => {},
-  deactivateAssistant: () => {},
-  checkPermissions: async () => false,
-  requestPermissions: async () => false,
-});
+const CallAssistantContext = createContext<
+  CallAssistantContextType | undefined
+>(undefined);
 
-// Custom hook to use the context
-export const useCallAssistantContext = () => useContext(CallAssistantContext);
-
-// Provider component
-interface CallAssistantProviderProps {
-  children: ReactNode;
-}
-
-export const CallAssistantProvider: React.FC<CallAssistantProviderProps> = ({
+export const CallAssistantProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isActive, setIsActive] = useState(false);
-  const [hasPermissions, setHasPermissions] = useState(false);
-  const [isInForeground, setIsInForeground] = useState(true);
+  const [isListening, setIsListening] = useState(false);
+  const [transcriptions, setTranscriptions] = useState<TranscriptionSegment[]>(
+    []
+  );
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [lastTranscriptionText, setLastTranscriptionText] = useState("");
 
-  // Check app state to ensure we're only running when in foreground
+  const recordingRef = useRef<Audio.Recording | null>(null);
+  const recognitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up when component unmounts
   useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      setIsInForeground(nextAppState === "active");
-
-      // If app goes to background, we need to deactivate the assistant
-      if (nextAppState !== "active" && isActive) {
-        deactivateAssistant();
-      }
-    };
-
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
-
     return () => {
-      subscription.remove();
+      if (recognitionTimeoutRef.current) {
+        clearTimeout(recognitionTimeoutRef.current);
+      }
+      stopRecording();
     };
-  }, [isActive]);
-
-  // Check permissions on mount
-  useEffect(() => {
-    checkPermissions();
   }, []);
 
-  const checkPermissions = async (): Promise<boolean> => {
-    try {
-      const { status } = await Audio.getPermissionsAsync();
-      const hasPermission = status === "granted";
-      setHasPermissions(hasPermission);
-      return hasPermission;
-    } catch (error) {
-      console.error("Failed to check microphone permissions:", error);
-      setHasPermissions(false);
-      return false;
-    }
-  };
-
-  const requestPermissions = async (): Promise<boolean> => {
+  // Start speech recognition
+  const startAssistant = async () => {
     try {
       const { status } = await Audio.requestPermissionsAsync();
-      const hasPermission = status === "granted";
-      setHasPermissions(hasPermission);
-      return hasPermission;
-    } catch (error) {
-      console.error("Failed to request microphone permissions:", error);
-      setHasPermissions(false);
-      return false;
-    }
-  };
 
-  const activateAssistant = async (): Promise<void> => {
-    // First ensure we have permissions
-    const permissionsGranted = hasPermissions || (await requestPermissions());
+      if (status !== "granted") {
+        console.error("Microphone permission not granted");
+        return;
+      }
 
-    if (!permissionsGranted) {
-      console.error(
-        "Cannot activate assistant: microphone permissions not granted"
-      );
-      return;
-    }
-
-    // Only activate if app is in foreground
-    if (isInForeground) {
       setIsActive(true);
-      // Additional setup logic could go here
-      console.log("Call Assistant activated");
-    } else {
-      console.error("Cannot activate assistant: app is not in foreground");
+      startRecording();
+
+      // Add welcome message
+      setSuggestions((prev) => [
+        ...prev,
+        {
+          id: `suggestion-${Date.now()}`,
+          text: "I'm here to help with your conversation! I'll listen and suggest replies.",
+          timestamp: Date.now(),
+          used: false,
+        },
+      ]);
+
+      // Vibrate to indicate assistant is active
+      Vibration.vibrate(100);
+    } catch (error) {
+      console.error("Error starting assistant:", error);
     }
   };
 
-  const deactivateAssistant = (): void => {
+  const stopAssistant = () => {
     setIsActive(false);
-    // Cleanup logic could go here
-    console.log("Call Assistant deactivated");
+    stopRecording();
+    if (recognitionTimeoutRef.current) {
+      clearTimeout(recognitionTimeoutRef.current);
+    }
   };
 
-  // Context value to be provided
-  const value: CallAssistantContextProps = {
-    isActive,
-    hasPermissions,
-    isInForeground,
-    activateAssistant,
-    deactivateAssistant,
-    checkPermissions,
-    requestPermissions,
+  const startRecording = async () => {
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+        // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+        // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      });
+
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      recording.setOnRecordingStatusUpdate((status) => {
+        // Handle recording status updates
+        if (status.isRecording && status.durationMillis > 4000) {
+          // Process audio every ~4 seconds to simulate continuous recognition
+          processCurrentAudio();
+        }
+      });
+
+      await recording.startAsync();
+      recordingRef.current = recording;
+      setIsListening(true);
+
+      // Set a timeout to process audio periodically
+      recognitionTimeoutRef.current = setTimeout(processCurrentAudio, 3000);
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      setIsListening(false);
+    }
+  };
+
+  const stopRecording = async () => {
+    if (recordingRef.current) {
+      try {
+        await recordingRef.current.stopAndUnloadAsync();
+        setIsListening(false);
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+      }
+      recordingRef.current = null;
+    }
+  };
+
+  // Process audio and get transcription
+  // In a real app, you'd send this audio to a speech-to-text service
+  const processCurrentAudio = async () => {
+    if (!recordingRef.current || !isActive) return;
+
+    try {
+      // Stop current recording
+      await recordingRef.current.stopAndUnloadAsync();
+      const uri = recordingRef.current.getURI();
+      recordingRef.current = null;
+
+      if (!uri) return;
+
+      // In a real app: Send audio file to speech recognition API
+      // For our demo, we'll simulate with random "heard" phrases
+      simulateTranscription(uri);
+
+      // Start a new recording session
+      startRecording();
+    } catch (error) {
+      console.error("Error processing audio:", error);
+      // Restart recording if there was an error
+      startRecording();
+    }
+  };
+
+  // This simulates what would happen when your STT service returns a result
+  const simulateTranscription = async (audioUri: string) => {
+    // Simulate processing delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // For demo: generate fake transcriptions
+    const mockPhrases = [
+      { text: "So what do you like to do on weekends?", isSelf: false },
+      {
+        text: "I've been thinking about trying that new restaurant downtown",
+        isSelf: true,
+      },
+      { text: "Have you seen any good movies lately?", isSelf: false },
+      {
+        text: "Tell me more about your job, it sounds interesting",
+        isSelf: true,
+      },
+      { text: "Do you have any upcoming travel plans?", isSelf: false },
+      { text: "I've been learning to play guitar recently", isSelf: true },
+      { text: "What kind of music are you into?", isSelf: false },
+    ];
+
+    // Select a random phrase
+    const mockTranscription =
+      mockPhrases[Math.floor(Math.random() * mockPhrases.length)];
+
+    // Add to transcriptions
+    const newTranscription = {
+      text: mockTranscription.text,
+      isSelf: mockTranscription.isSelf,
+      timestamp: Date.now(),
+    };
+
+    setTranscriptions((prev) => [...prev, newTranscription]);
+    setLastTranscriptionText(mockTranscription.text);
+
+    // Clean up temp file
+    try {
+      await FileSystem.deleteAsync(audioUri);
+    } catch (error) {
+      console.error("Error deleting audio file:", error);
+    }
+
+    // Generate suggestion if the transcription is from the other person
+    if (!mockTranscription.isSelf) {
+      generateSuggestion(mockTranscription.text);
+    }
+  };
+
+  // For manual input when voice recognition isn't clear
+  const addManualTranscription = (text: string, isSelf: boolean) => {
+    const newTranscription = {
+      text,
+      isSelf,
+      timestamp: Date.now(),
+    };
+
+    setTranscriptions((prev) => [...prev, newTranscription]);
+    setLastTranscriptionText(text);
+
+    // Generate suggestion if the transcription is from the other person
+    if (!isSelf) {
+      generateSuggestion(text);
+    }
+  };
+
+  // Generate a suggestion based on transcription
+  const generateSuggestion = async (transcriptionText: string) => {
+    try {
+      const suggestionText = await mockAIService.generateSuggestion(
+        transcriptionText
+      );
+
+      const newSuggestion = {
+        id: `suggestion-${Date.now()}`,
+        text: suggestionText,
+        timestamp: Date.now(),
+        used: false,
+      };
+
+      setSuggestions((prev) => [...prev, newSuggestion]);
+
+      // Vibrate to notify user of new suggestion
+      Vibration.vibrate([0, 100, 50, 100]);
+    } catch (error) {
+      console.error("Error generating suggestion:", error);
+    }
+  };
+
+  const markSuggestionAsUsed = (id: string) => {
+    setSuggestions((prev) =>
+      prev.map((suggestion) =>
+        suggestion.id === id ? { ...suggestion, used: true } : suggestion
+      )
+    );
   };
 
   return (
-    <CallAssistantContext.Provider value={value}>
+    <CallAssistantContext.Provider
+      value={{
+        isActive,
+        startAssistant,
+        stopAssistant,
+        transcriptions,
+        suggestions,
+        markSuggestionAsUsed,
+        lastTranscriptionText,
+        isListening,
+        addManualTranscription,
+      }}
+    >
       {children}
     </CallAssistantContext.Provider>
   );
+};
+
+export const useCallAssistant = () => {
+  const context = useContext(CallAssistantContext);
+  if (context === undefined) {
+    throw new Error(
+      "useCallAssistant must be used within a CallAssistantProvider"
+    );
+  }
+  return context;
 };
