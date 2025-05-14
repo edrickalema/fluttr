@@ -217,7 +217,7 @@ export default function SettingsScreen() {
             subtitle: "",
             onToggle: undefined,
             onPress: () => {
-              router.push("/(screens)/demo-call");
+              router.push("/(screens)/call-assistant");
             },
           })}
         </View>

@@ -4,7 +4,7 @@ export const Fonts = {
   heading: {
     fontFamily: "Poppins_700Bold",
     fontSize: normalize(34),
-    lineHeight: 34,
+    lineHeight: normalize(34),
   },
   subheading: {
     fontFamily: "Poppins_600SemiBold",

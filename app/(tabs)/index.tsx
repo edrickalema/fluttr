@@ -7,7 +7,7 @@ import { Fonts } from "@/constants/fonts";
 // import { normalize } from "@/utils/responsive";
 // import * as Clipboard from "expo-clipboard";
 // import { LinearGradient } from "expo-linear-gradient";
-import { List, Sparkles } from "lucide-react-native";
+import { Sparkle, Sparkles, SparklesIcon } from "lucide-react-native";
 // import React, { useState } from "react";
 // import {
 //   ScrollView,
@@ -222,7 +222,6 @@ import { useAssistant } from "@/context/AssitantContext";
 import { normalize } from "@/utils/responsive";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Sparkle } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -292,10 +291,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           style={styles.sparkleBox}
           onPress={generateNewPickupLine}
         >
-          <Sparkles
+          {/* <Ionicons
+            name='bulb-outline'
+            style={{
+              shadowColor: Colors.pink,
+              shadowOpacity: 0.8,
+              shadowRadius: 5,
+            }}
+          /> */}
+
+          <SparklesIcon
+            style={{
+              shadowColor: Colors.pink,
+              shadowOpacity: 0.8,
+              shadowRadius: 5,
+            }}
             size={normalize(30)}
-            color={Colors.mediumText}
-            strokeWidth={1.5}
+            color={Colors.pink}
           />
         </TouchableOpacity>
       </View>
@@ -309,7 +321,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>Never Be Textless Again</Text>
             <Text style={styles.heroSubtitle}>
-              Craft the perfect replies that make your crush smile
+              Craft the perfect replies that make your crush smile 😍
             </Text>
           </View>
 
@@ -330,7 +342,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <View style={styles.featuresSection}>
           <View style={styles.featureCard}>
             <View style={styles.featureImageContainer}>
-              <Sparkle />
+              <Sparkles size={normalize(30)} />
             </View>
             <Text style={styles.featureTitle}>AI-Powered Suggestions</Text>
             <Text style={styles.featureText}>
@@ -343,12 +355,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             style={StyleSheet.compose(globalStyles.card, styles.featureCard)}
           >
             <View style={styles.featureImageContainer}>
-              <List />
+              <Sparkle size={normalize(30)} />
             </View>
-            <Text style={styles.featureTitle}>Choose Your Tone</Text>
+            <Text style={styles.featureTitle}> Call Assistance</Text>
             <Text style={styles.featureText}>
-              Whether you want to be flirty, sweet, or witty, our assistant
-              adapts to your preferred style.
+              Use our assistant during live calls or dates to generate quick,
+              thoughtful responses , ensuring smooth and engaging conversations.
             </Text>
           </View>
         </View>
@@ -387,9 +399,7 @@ const styles = StyleSheet.create({
       height: 2,
     },
   },
-  welcomeText: {
-    ...Fonts.heading,
-  },
+
   logo: {
     fontWeight: "bold",
     color: Colors.pink,
@@ -400,13 +410,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     marginTop: 10,
   },
-  heroBg: {
-    width: cardWidth,
-    height: 220,
-    marginBottom: 20,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
+
   heroContent: {
     flex: 1,
 
@@ -421,7 +425,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   heroTitle: {
-    fontSize: 24,
+    ...Fonts.subheading,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 10,
