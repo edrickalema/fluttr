@@ -20,7 +20,7 @@ import {
 
 export default function Home() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { notifications, requestPermission } = useNotificationListener();
+
 
   const [lines] = useState([
     {
@@ -95,8 +95,8 @@ export default function Home() {
 
         <TouchableOpacity
           style={styles.sparkleBox}
-          // onPress={generateNewPickupLine}
-          onPress={requestPermission}
+          onPress={generateNewPickupLine}
+          // onPress={requestPermission}
         >
           <Sparkles
             size={normalize(30)}
@@ -111,11 +111,11 @@ export default function Home() {
       </Text>
 
       {/* Testing */}
-      {notifications.map((notif, index) => (
+      {/* {notifications.map((notif, index) => (
         <Text key={index}>
           {notif.packageName}: {notif.title} - {notif.text}
         </Text>
-      ))}
+      ))} */}
 
       <View style={styles.cardsContainer}>
         {lines.map((line, index) => (

@@ -55,7 +55,7 @@ export default function PrivacyScreen() {
   }));
 
   const handleNext = () => {
-    router.push("/(onboarding)/tone");
+    router.push("/(tabs)");
   };
 
   return (
