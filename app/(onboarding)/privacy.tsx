@@ -1,20 +1,21 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  withRepeat,
-  Easing,
-} from "react-native-reanimated";
-import LottieView from "lottie-react-native";
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { Images } from "@/constants/images";
+import LottieView from "lottie-react-native";
+import React, { useEffect } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
-import { useRouter } from "expo-router";
 import AnimatedButton from "@/components/main/button";
+import Text from "@/components/main/custom-text";
+import { normalize } from "@/utils/responsive";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -71,8 +72,10 @@ export default function PrivacyScreen() {
         </Animated.View>
 
         <Animated.View style={[styles.textContainer, textContainerStyle]}>
-          <Text style={styles.title}>Privacy You Can Trust</Text>
-          <Text style={styles.description}>
+          <Text variant='heading' style={styles.title}>
+            Privacy You Can Trust
+          </Text>
+          <Text variant='body' style={styles.description}>
             All suggestions are on-device, no data stored
           </Text>
         </Animated.View>
@@ -97,44 +100,48 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 60,
-    paddingHorizontal: 20,
+    paddingVertical: normalize(60),
+    paddingHorizontal: normalize(20),
   },
   lockContainer: {
-    width: 150,
-    height: 150,
+    width: normalize(150),
+    height: normalize(150),
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: normalize(40),
   },
   lockAnimation: {
-    width: 150,
-    height: 150,
+    width: normalize(150),
+    height: normalize(150),
   },
   textContainer: {
     width: "100%",
-    paddingHorizontal: 20,
+    paddingHorizontal: normalize(20),
+    marginVertical: normalize(32),
   },
   title: {
-    ...Fonts.subheading,
+    lineHeight: normalize(30),
     color: Colors.darkText,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: normalize(16),
   },
   description: {
-    ...Fonts.body,
+    lineHeight: normalize(24),
     color: Colors.mediumText,
     textAlign: "center",
   },
   button: {
-    backgroundColor: Colors.buttonBackground,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-    shadowColor: "#000",
+    backgroundColor: Colors.pink,
+    paddingVertical: normalize(16),
+    paddingHorizontal: normalize(40),
+    borderRadius: normalize(30),
+    shadowColor: Colors.pink,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
     elevation: 3,
+    width: "90%",
+    alignItems: "center",
+    alignSelf: "center",
   },
 });

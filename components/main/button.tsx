@@ -2,7 +2,6 @@ import React from "react";
 import {
   StyleProp,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   ViewStyle,
@@ -15,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
+import Text from "./custom-text";
 
 interface AnimatedButtonProps {
   title: string;
@@ -69,7 +68,9 @@ const AnimatedButton = ({
         disabled={disabled}
         activeOpacity={0.8}
       >
-        <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+        <Text variant='button' style={[styles.buttonText, textStyle]}>
+          {title}
+        </Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
     minWidth: "100%",
   },
   buttonText: {
-    ...Fonts.button,
     color: Colors.buttonText,
   },
   disabled: {

@@ -38,6 +38,7 @@ export default function TabsLayout() {
         options={{
           title: "Favourites",
           tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+          tabBarLabelStyle: { ...styles.tabBarLabel, fontWeight: "bold" },
         }}
       />
       <Tabs.Screen

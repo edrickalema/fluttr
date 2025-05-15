@@ -1,12 +1,14 @@
 import AnimatedButton from "@/components/main/button";
+import Text from "@/components/main/custom-text";
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
+
+import { useTheme } from "@/context/ThemeContext";
 import { normalize } from "@/utils/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { MessageCircle } from "lucide-react-native";
 import React, { useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -19,6 +21,8 @@ const { width, height } = Dimensions.get("window");
 
 export default function WelcomeScreen() {
   const router = useRouter();
+
+  const { theme } = useTheme();
 
   // Animation values
   const fadeIn = useSharedValue(0);
@@ -55,7 +59,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[Colors.gradientPinkStart, Colors.gradientPinkEnd]}
+        colors={[theme?.gradientColors[0], theme?.gradientColors[1]]}
         style={styles.gradient}
       >
         <View style={styles.content}>
@@ -64,18 +68,22 @@ export default function WelcomeScreen() {
           </Animated.View>
 
           <Animated.View style={[styles.textContainer, contentStyle]}>
-            <Text style={styles.title}>
+            <Text variant='heading' style={styles.title}>
               Less Awkward Texts,{"\n"}
-              <Text style={styles.highlightText}>More{"\n"}Romance!</Text>
+              <Text variant='heading' style={styles.highlightText}>
+                More{"\n"}Romance!
+              </Text>
             </Text>
 
-            <Text style={styles.subtitle}>
+            <Text variant='subheading' style={styles.subtitle}>
               Discover meaningful connections{"\n"}
               with Fluttr, where romance begins.
             </Text>
 
             <View style={styles.codeContainer}>
-              <Text style={styles.codeText}>Your journey starts here!</Text>
+              <Text variant='body' style={styles.codeText}>
+                Your journey starts here!
+              </Text>
             </View>
           </Animated.View>
 
@@ -85,15 +93,6 @@ export default function WelcomeScreen() {
               onPress={handleNext}
               style={styles.continueButton}
             />
-
-            {/* <AnimatedButton
-              title='Join waitlist'
-              onPress={() => {}}
-              style={styles.waitlistButton}
-              textStyle={styles.waitlistButtonText}
-            />
-
-            <Text style={styles.memberText}>I'm already a member</Text> */}
           </View>
         </View>
       </LinearGradient>
@@ -104,68 +103,60 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width,
+    backgroundColor: Colors.lightText,
   },
   gradient: {
     flex: 1,
-    backgroundColor: Colors.lightText,
   },
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: normalize(60),
     alignItems: "flex-start",
   },
   iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
+    width: normalize(64),
+    height: normalize(64),
+    borderRadius: normalize(20),
     backgroundColor: Colors.cream,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: normalize(36),
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   textContainer: {
     alignSelf: "stretch",
-    marginBottom: 40,
+    marginBottom: normalize(48),
   },
   title: {
-    ...Fonts.heading,
-    fontSize: normalize(40),
-    lineHeight: 48,
+    lineHeight: normalize(46),
     color: Colors.darkText,
-    marginBottom: 24,
+    marginBottom: normalize(20),
   },
   highlightText: {
     color: Colors.flirtyPink,
   },
   subtitle: {
-    ...Fonts.body,
-    fontSize: normalize(18),
     color: Colors.mediumText,
-    marginBottom: 24,
   },
   codeContainer: {
     backgroundColor: Colors.cream,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginTop: 8,
+    paddingVertical: normalize(16),
+    paddingHorizontal: normalize(20),
+    borderRadius: normalize(12),
+    marginTop: normalize(12),
   },
   codeText: {
-    ...Fonts.heading,
-    fontSize: 20,
-    color: Colors.darkText,
     letterSpacing: 1,
+    color: Colors.darkText,
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: normalize(40),
     left: 24,
     right: 24,
     alignItems: "center",
@@ -173,19 +164,32 @@ const styles = StyleSheet.create({
   continueButton: {
     width: "100%",
     backgroundColor: Colors.pink,
-    marginBottom: 12,
+    paddingVertical: normalize(16),
+    borderRadius: normalize(30),
+    marginBottom: normalize(12),
+    shadowColor: Colors.pink,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
   waitlistButton: {
     width: "100%",
     backgroundColor: Colors.cream,
-    marginBottom: 20,
+    paddingVertical: normalize(16),
+    borderRadius: normalize(30),
+    borderWidth: 1,
+    borderColor: Colors.mediumText,
+    marginBottom: normalize(20),
   },
   waitlistButtonText: {
     color: Colors.darkText,
+
+    fontWeight: "600",
   },
   memberText: {
-    ...Fonts.body,
     color: Colors.mediumText,
     textDecorationLine: "underline",
+    marginTop: normalize(12),
   },
 });

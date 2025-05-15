@@ -3,8 +3,8 @@ import { AudioWaveform } from "@/components/animation/audio-wave";
 import { FloatingActionButton } from "@/components/assistance/call/FloatingActionButton";
 import { SuggestionBubble } from "@/components/assistance/call/SuggestionBubble";
 import { TranscriptionList } from "@/components/assistance/call/TranscriptionList";
+import Text from "@/components/main/custom-text";
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { useCallAssistant } from "@/context/CallAssitantContext";
 import { normalize } from "@/utils/responsive";
 
@@ -21,7 +21,6 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -141,12 +140,10 @@ const CallAssistantScreen: React.FC = () => {
           </TouchableOpacity>
 
           <View style={styles.welcomeContainer}>
-            <Text
-              style={StyleSheet.compose(styles.welcomeTitle, Fonts.subheading)}
-            >
+            <Text variant='heading' style={styles.welcomeTitle}>
               Fluttr Call Assistant
             </Text>
-            <Text style={StyleSheet.compose(styles.welcomeText, Fonts.body)}>
+            <Text variant='body' style={styles.welcomeText}>
               Get real-time tips and conversation starters during your calls or
               live dates. Fluttr Call Assistant helps you feel confident and
               make every moment count.
@@ -198,12 +195,14 @@ const CallAssistantScreen: React.FC = () => {
             >
               <MaterialIcons name='close' size={24} color='#FF5F6D' />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Call Assistant</Text>
+            <Text variant='body' style={styles.headerTitle}>
+              Call Assistant
+            </Text>
             <View style={styles.listeningIndicator}>
               <Animated.View style={[{ transform: [{ scale: pulseAnim }] }]}>
                 <AudioWaveform isActive={true} />
               </Animated.View>
-              <Text style={styles.listeningText}>
+              <Text variant='small' style={styles.listeningText}>
                 {isListening ? "Listening..." : "Paused"}
               </Text>
             </View>
@@ -220,7 +219,7 @@ const CallAssistantScreen: React.FC = () => {
 
           {/* Suggestions Container */}
           <View style={styles.suggestionsContainer}>
-            <Text style={[styles.suggestionsTitle, Fonts.heading]}>
+            <Text variant='heading' style={[styles.suggestionsTitle]}>
               Suggestions
             </Text>
             <ScrollView
@@ -239,7 +238,7 @@ const CallAssistantScreen: React.FC = () => {
                 ))}
               {suggestions.filter((s: any) => !s.used).length === 0 && (
                 <View style={styles.emptySuggestion}>
-                  <Text style={styles.emptySuggestionText}>
+                  <Text variant='body' style={styles.emptySuggestionText}>
                     Listening for conversation...
                   </Text>
                 </View>
@@ -364,10 +363,8 @@ const styles = StyleSheet.create({
     color: Colors.gradientPinkStart,
     marginBottom: 10,
     textAlign: "center",
-    ...Fonts.subheading,
   },
   welcomeText: {
-    ...Fonts.body,
     color: Colors.darkText,
     textAlign: "center",
     marginBottom: 20,
@@ -392,7 +389,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     color: Colors.buttonText,
-    ...Fonts.button,
+
     fontWeight: "bold",
     marginRight: 10,
   },
@@ -426,7 +423,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: Colors.gradientPinkStart,
     fontWeight: "bold",
-    ...Fonts.body,
   },
   listeningIndicator: {
     flexDirection: "row",
@@ -439,7 +435,7 @@ const styles = StyleSheet.create({
   },
   listeningText: {
     color: Colors.mediumText,
-    ...Fonts.small,
+
     marginLeft: 5,
   },
   contentContainer: {
@@ -473,7 +469,6 @@ const styles = StyleSheet.create({
   },
 
   suggestionsTitle: {
-    fontSize: 16,
     fontWeight: "bold",
     color: Colors.darkText,
     paddingBottom: normalize(20),

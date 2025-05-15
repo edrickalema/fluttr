@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Text from "@/components/main/custom-text";
+import { Colors } from "@/constants/colors";
+import { useTheme } from "@/context/ThemeContext";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { ChevronLeft, Heart, MessageCircle, Type } from "lucide-react-native";
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeIn,
   SlideInRight,
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { ChevronLeft, Heart, Type, MessageCircle } from "lucide-react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 
 const themeColors = [
   { name: "Romance", primary: "#FF9CAD", secondary: "#FFE5E5" },
@@ -26,13 +27,65 @@ const fontStyles = [
   { name: "Roboto", preview: "Aa" },
 ];
 
+const themeMapping: { [key: string]: string } = {
+  Romance: "romance",
+  Lavender: "lavender",
+  Sunset: "sunset",
+  Ocean: "ocean",
+};
+
+const fontMapping: { [key: string]: string } = {
+  Poppins: "poppins",
+  Playfair: "playfair",
+  Montserrat: "montserrat",
+  Roboto: "roboto",
+};
+
 export default function AppearanceScreen() {
   const router = useRouter();
-  const [selectedTheme, setSelectedTheme] = useState(0);
-  const [selectedFont, setSelectedFont] = useState(0);
+
+  const { theme, font, themeId, fontId, updateTheme, updateFont } = useTheme();
+  console.log(theme, font);
+
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    const themeName =
+      Object.keys(themeMapping).find((key) => themeMapping[key] === themeId) ||
+      "Romance";
+    return themeName;
+  });
+
+  const [selectedFont, setSelectedFont] = useState(() => {
+    const fontName =
+      Object.keys(fontMapping).find((key) => fontMapping[key] === fontId) ||
+      "Poppins";
+    return fontName;
+  });
+
+  const saveAppearanceSettings = async () => {
+    try {
+      const themeIdToSave = themeMapping[selectedTheme];
+      const fontIdToSave = fontMapping[selectedFont];
+
+      await updateTheme(themeIdToSave);
+      await updateFont(fontIdToSave);
+
+      alert("Appearance settings saved successfully!");
+      router.back();
+    } catch (error) {
+      console.log("Error saving appearance settings", error);
+      alert("Failed to save settings. Please try again.");
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+        },
+      ]}
+    >
       <Animated.View entering={FadeIn.duration(500)} style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -40,8 +93,12 @@ export default function AppearanceScreen() {
         >
           <ChevronLeft size={24} color={Colors.darkText} />
         </TouchableOpacity>
-        <Text style={styles.title}>Appearance</Text>
-        <Text style={styles.subtitle}>Customize the app's look and feel</Text>
+        <Text variant='heading' style={styles.title}>
+          Appearance
+        </Text>
+        <Text variant='subheading' style={styles.subtitle}>
+          Customize the app's look and feel
+        </Text>
       </Animated.View>
 
       <Animated.ScrollView
@@ -55,8 +112,8 @@ export default function AppearanceScreen() {
             <ThemeColorCard
               key={index}
               theme={theme}
-              isSelected={selectedTheme === index}
-              onSelect={() => setSelectedTheme(index)}
+              isSelected={selectedTheme === theme?.name}
+              onSelect={() => setSelectedTheme(theme?.name)}
             />
           ))}
         </View>
@@ -67,8 +124,8 @@ export default function AppearanceScreen() {
             <FontStyleCard
               key={index}
               font={font}
-              isSelected={selectedFont === index}
-              onSelect={() => setSelectedFont(index)}
+              isSelected={selectedFont === font?.name}
+              onSelect={() => setSelectedFont(font?.name)}
             />
           ))}
         </View>
@@ -95,7 +152,7 @@ export default function AppearanceScreen() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.saveButton}
-          onPress={() => router.back()}
+          onPress={saveAppearanceSettings}
         >
           <Text style={styles.saveButtonText}>Save Changes</Text>
         </TouchableOpacity>
@@ -166,7 +223,6 @@ const FontStyleCard: React.FC<FontStyleCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.cream,
   },
   header: {
     paddingTop: 60,
@@ -177,12 +233,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    ...Fonts.heading,
     color: Colors.darkText,
     marginBottom: 8,
   },
   subtitle: {
-    ...Fonts.body,
     color: Colors.mediumText,
   },
   content: {
@@ -190,7 +244,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
-    ...Fonts.subheading,
     fontSize: 18,
     color: Colors.darkText,
     marginBottom: 15,
@@ -216,7 +269,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.darkText,
   },
   themeName: {
-    ...Fonts.body,
     fontSize: 14,
     color: Colors.darkText,
     textAlign: "center",
@@ -246,13 +298,11 @@ const styles = StyleSheet.create({
     borderColor: Colors.flirtyPink,
   },
   fontName: {
-    ...Fonts.body,
     fontSize: 14,
     color: Colors.darkText,
     marginTop: 8,
   },
   fontPreviewText: {
-    ...Fonts.heading,
     fontSize: 24,
     color: Colors.darkText,
     marginTop: 8,
@@ -283,7 +333,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 5,
   },
   bubbleText: {
-    ...Fonts.body,
     color: Colors.darkText,
   },
   sentBubbleText: {
@@ -299,7 +348,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cream,
   },
   bubbleStyleText: {
-    ...Fonts.body,
     color: Colors.darkText,
   },
   footer: {
@@ -318,7 +366,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   saveButtonText: {
-    ...Fonts.button,
     color: Colors.lightText,
   },
 });

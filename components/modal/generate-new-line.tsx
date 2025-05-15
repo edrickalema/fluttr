@@ -1,12 +1,13 @@
 // components/home/GenerateLineModal.tsx
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { globalStyles } from "@/constants/globalStyles";
+import { usePickupLineGenerator } from "@/hooks/usePickupuplineGenerator";
 import { steps } from "@/utils/get-pickup-steps";
 import { normalize } from "@/utils/responsive";
 import { ChevronRight, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Modal,
@@ -43,13 +44,18 @@ export default function GenerateLineModal({
     appearance: "",
     personality: "",
     sharedInterests: "",
+    context: "",
+    tone: "",
   });
+
+  const { pickupLine, isLoading, error, generateLine } =
+    usePickupLineGenerator();
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      onGenerate(formData);
+      generateLine(formData);
       console.log(formData);
     }
   };
@@ -72,6 +78,7 @@ export default function GenerateLineModal({
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
 
+  
   return (
     <Modal
       visible={visible}
@@ -135,7 +142,6 @@ export default function GenerateLineModal({
                   style={StyleSheet.flatten([
                     globalStyles.text,
                     globalStyles.card,
-                    Fonts.body,
                   ])}
                 >
                   {currentStepData.info}
@@ -202,7 +208,6 @@ export default function GenerateLineModal({
                           renderItem={({ item }) => (
                             <Text
                               style={[
-                                Fonts.body,
                                 {
                                   color: Colors.mediumText,
                                   marginTop: normalize(5),
@@ -249,11 +254,17 @@ export default function GenerateLineModal({
               }
             >
               <Text style={globalStyles.buttonText}>
-                {currentStep === 0
-                  ? "Let's start"
-                  : isLastStep
-                  ? "Get your Line"
-                  : "Next"}
+                {currentStep === 0 ? (
+                  "Let's start"
+                ) : isLastStep ? (
+                  isLoading ? (
+                    "Get your Line"
+                  ) : (
+                    <ActivityIndicator />
+                  )
+                ) : (
+                  "Next"
+                )}
               </Text>
             </TouchableOpacity>
           </View>
@@ -344,14 +355,12 @@ const styles = StyleSheet.create({
   },
 
   stepTitle: {
-    ...Fonts.subheading,
     color: Colors.darkText,
     textAlign: "center",
     marginBottom: normalize(10),
   },
 
   stepDescription: {
-    ...Fonts.body,
     color: Colors.mediumText,
     textAlign: "center",
     marginBottom: normalize(20),
@@ -363,7 +372,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.inputBackground || "#F5F5F5",
     borderRadius: normalize(15),
     padding: normalize(15),
-    ...Fonts.body,
+
     color: Colors.textPrimary,
     textAlignVertical: "top",
   },

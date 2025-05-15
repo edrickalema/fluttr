@@ -1,19 +1,13 @@
 // app/(tabs)/favorites.tsx
+import Text from "@/components/main/custom-text";
 import SwipeableCard from "@/components/main/sweapabale-card";
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { globalStyles } from "@/constants/globalStyles";
+import { normalize } from "@/utils/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import { Heart } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
 import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
@@ -74,11 +68,15 @@ export default function FavoritesScreen() {
 
       <Animated.View entering={SlideInDown.duration(500)} style={styles.header}>
         <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>Favorites</Text>
+          <Text variant='heading' style={styles.headerTitle}>
+            Favorites
+          </Text>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Heart size={20} color={Colors.pink} />
-              <Text style={styles.statText}>{lines.length} Lines</Text>
+              <Text variant='body' style={styles.statText}>
+                {lines.length} Lines
+              </Text>
             </View>
           </View>
         </View>
@@ -105,9 +103,9 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    paddingTop: 60,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingTop: normalize(60),
+    paddingHorizontal: normalize(20),
+    paddingBottom: normalize(20),
   },
   headerContent: {
     flexDirection: "row",
@@ -115,53 +113,57 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    ...Fonts.heading,
     color: Colors.darkText,
   },
+
   statsContainer: {
     flexDirection: "row",
     alignItems: "center",
+    gap: normalize(12),
+    marginTop: normalize(12),
   },
   statItem: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.lightText,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: normalize(12),
+    paddingVertical: normalize(6),
+    borderRadius: normalize(20),
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
   },
   statText: {
-    ...Fonts.small,
     color: Colors.darkText,
-    marginLeft: 6,
+    marginLeft: normalize(6),
   },
+
   listContent: {
-    paddingBottom: 100,
+    paddingBottom: normalize(100),
   },
+
   emptyContainer: {
     alignItems: "center",
-    paddingHorizontal: 40,
-    paddingTop: 60,
+    paddingHorizontal: normalize(40),
+    paddingTop: normalize(60),
   },
   emptyImage: {
     width: width * 0.6,
     height: width * 0.6,
-    borderRadius: width * 0.3,
-    marginBottom: 24,
+    borderRadius: (width * 0.6) / 2,
+    marginBottom: normalize(24),
   },
   emptyTitle: {
-    ...Fonts.subheading,
+    fontSize: normalize(20),
     color: Colors.darkText,
-    marginBottom: 8,
+    marginBottom: normalize(8),
   },
   emptyText: {
-    ...Fonts.body,
     color: Colors.mediumText,
     textAlign: "center",
+
+    lineHeight: normalize(22),
   },
 });

@@ -1,14 +1,11 @@
 // app/(tabs)/settings.tsx
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   Bell,
   ChevronRight,
   Crown,
   Heart,
-  History,
-  Lock,
   LogOut,
   MessageCircle,
   Palette,
@@ -20,14 +17,16 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
 import Animated, { FadeIn, SlideInRight } from "react-native-reanimated";
 // import { getSelectedTone } from "@/utils/storage";
-import { useRouter } from "expo-router";
+import Text from "@/components/main/custom-text";
 import { useAssistant } from "@/context/AssitantContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useRouter } from "expo-router";
 interface SettingItemProps {
   icon: React.ReactNode;
   title: string;
@@ -40,13 +39,13 @@ interface SettingItemProps {
 }
 
 export default function SettingsScreen() {
+  const { theme } = useTheme();
   // Router
   const router = useRouter();
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
 
   const { isAssistantEnabled, toggleAssistantEnabled } = useAssistant();
-
 
   // Feature toggles
   const [smartAssistant, setSmartAssistant] = useState(true);
@@ -88,10 +87,16 @@ export default function SettingsScreen() {
       <View style={styles.settingIcon}>{icon}</View>
       <View style={styles.settingContent}>
         <View style={styles.settingHeader}>
-          <Text style={styles.settingTitle}>{title}</Text>
+          <Text style={styles.settingTitle} variant='subheading'>
+            {title}
+          </Text>
           {isPro && renderProBadge()}
         </View>
-        {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
+        {subtitle && (
+          <Text style={styles.settingSubtitle} variant='body'>
+            {subtitle}
+          </Text>
+        )}
       </View>
       {isToggle ? (
         <Switch
@@ -118,8 +123,10 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Animated.View entering={FadeIn.duration(500)} style={styles.header}>
-          <Text style={styles.headerTitle}>Settings</Text>
-          <Text style={styles.headerSubtitle}>
+          <Text variant='heading' style={styles.headerTitle}>
+            Settings
+          </Text>
+          <Text variant='body' style={styles.headerSubtitle}>
             Customize your romantic experience
           </Text>
         </Animated.View>
@@ -137,13 +144,17 @@ export default function SettingsScreen() {
             >
               <View style={styles.proContent}>
                 <Crown size={24} color={Colors.lightText} />
-                <Text style={styles.proTitle}>Upgrade to Pro</Text>
-                <Text style={styles.proDescription}>
+                <Text variant='subheading' style={styles.proTitle}>
+                  Upgrade to Pro
+                </Text>
+                <Text variant='body' style={styles.proDescription}>
                   Get access to advanced AI features and exclusive flirting
                   styles
                 </Text>
                 <TouchableOpacity style={styles.proButton}>
-                  <Text style={styles.proButtonText}>Upgrade Now</Text>
+                  <Text variant='button' style={styles.proButtonText}>
+                    Upgrade Now
+                  </Text>
                 </TouchableOpacity>
               </View>
             </LinearGradient>
@@ -151,7 +162,9 @@ export default function SettingsScreen() {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Smart Features</Text>
+          <Text variant='heading' style={styles.sectionTitle}>
+            Smart Features
+          </Text>
           {renderSettingItem({
             icon: <Sparkles size={24} color={Colors.pink} />,
             title: "Romantic Assistant",
@@ -200,7 +213,7 @@ export default function SettingsScreen() {
           })}
         </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>Privacy & Data</Text>
           {renderSettingItem({
             icon: <Lock size={24} color={Colors.darkText} />,
@@ -220,11 +233,13 @@ export default function SettingsScreen() {
               router.push("/(screens)/call-assistant");
             },
           })}
-        </View>
+        </View> */}
 
         <TouchableOpacity style={styles.logoutButton}>
           <LogOut size={20} color={Colors.flirtyPink} />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text variant='button' style={styles.logoutText}>
+            Log Out
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -252,12 +267,10 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   headerTitle: {
-    ...Fonts.heading,
     color: Colors.darkText,
     marginBottom: 8,
   },
   headerSubtitle: {
-    ...Fonts.body,
     color: Colors.mediumText,
   },
   proCard: {
@@ -278,13 +291,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   proTitle: {
-    ...Fonts.subheading,
     color: Colors.white,
     marginTop: 12,
     marginBottom: 8,
   },
   proDescription: {
-    ...Fonts.body,
     color: Colors.white,
     textAlign: "center",
     marginBottom: 16,
@@ -301,14 +312,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   proButtonText: {
-    ...Fonts.button,
     color: Colors.darkText,
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
-    ...Fonts.subheading,
     fontSize: 18,
     color: Colors.darkText,
     marginLeft: 20,
@@ -339,12 +348,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   settingTitle: {
-    ...Fonts.body,
     color: Colors.darkText,
     marginRight: 8,
   },
   settingSubtitle: {
-    ...Fonts.small,
     color: Colors.mediumText,
     marginTop: 4,
   },
@@ -357,7 +364,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   proBadgeText: {
-    ...Fonts.small,
     color: Colors.white,
     marginLeft: 4,
     fontSize: 10,
@@ -370,9 +376,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoutText: {
-    ...Fonts.body,
     color: Colors.flirtyPink,
     marginLeft: 8,
   },
 });
-

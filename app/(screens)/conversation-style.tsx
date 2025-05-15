@@ -141,101 +141,124 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.cream,
   },
+
   header: {
     paddingTop: normalize(60),
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: normalize(20),
+    paddingBottom: normalize(20),
   },
+
   backButton: {
-    marginBottom: 15,
+    marginBottom: normalize(15),
   },
+
   title: {
     ...Fonts.heading,
     color: Colors.darkText,
-    marginBottom: 8,
+    marginBottom: normalize(8),
   },
+
   subtitle: {
     ...Fonts.body,
     color: Colors.mediumText,
+    fontSize: normalize(16),
   },
+
   content: {
-    padding: 20,
-    gap: 15,
+    paddingHorizontal: normalize(20),
+    paddingBottom: normalize(20),
+    gap: normalize(15),
   },
+
   cardContainer: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
   },
+
   card: {
     backgroundColor: Colors.lightText,
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: normalize(15),
+    padding: normalize(20),
     borderWidth: 2,
     borderColor: "transparent",
   },
+
   selectedCard: {
     borderColor: Colors.flirtyPink,
   },
+
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: normalize(10),
   },
+
   cardTitle: {
     ...Fonts.subheading,
-    fontSize: 18,
+    fontSize: normalize(18),
     color: Colors.darkText,
   },
+
   emoji: {
-    fontSize: 24,
+    fontSize: normalize(24),
   },
+
   cardDescription: {
     ...Fonts.body,
     color: Colors.mediumText,
-    marginBottom: 10,
+    fontSize: normalize(14),
+    lineHeight: normalize(20),
+    marginBottom: normalize(10),
   },
+
   radioButton: {
     position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    right: normalize(20),
+    bottom: normalize(20),
+    width: normalize(24),
+    height: normalize(24),
+    borderRadius: normalize(12),
     borderWidth: 2,
     borderColor: Colors.mediumText,
     justifyContent: "center",
     alignItems: "center",
   },
+
   radioButtonSelected: {
     borderColor: Colors.flirtyPink,
   },
+
   radioButtonInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: normalize(12),
+    height: normalize(12),
+    borderRadius: normalize(6),
     backgroundColor: Colors.flirtyPink,
   },
+
   footer: {
-    padding: 20,
-    paddingBottom: 40,
+    paddingHorizontal: normalize(20),
+    paddingBottom: normalize(40),
   },
+
   saveButton: {
     backgroundColor: Colors.flirtyPink,
-    paddingVertical: 15,
-    borderRadius: 30,
+    paddingVertical: normalize(15),
+    borderRadius: normalize(30),
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
+
   saveButtonText: {
     ...Fonts.button,
     color: Colors.lightText,
   },
 });
+

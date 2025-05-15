@@ -1,12 +1,15 @@
 // components/favorites/SwipeablePickupLine.tsx
+import { Colors } from "@/constants/colors";
+import { globalStyles } from "@/constants/globalStyles";
+import { normalize } from "@/utils/responsive";
+import { Copy, Share2, Trash2 } from "lucide-react-native";
 import React, { useRef } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Dimensions,
-  TouchableOpacity,
   Share,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import Animated, {
@@ -15,11 +18,7 @@ import Animated, {
   SlideInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
-import { Copy, Share2, Trash2 } from "lucide-react-native";
-import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
-import { normalize } from "@/utils/responsive";
-import { globalStyles } from "@/constants/globalStyles";
+import Text from "./custom-text";
 
 const { width } = Dimensions.get("window");
 
@@ -56,27 +55,37 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
     return (
       <View style={globalStyles.actionButton}>
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: Colors.shyBlue }]}
+          style={[
+            styles.actionButton,
+            { width: normalize(40), height: normalize(40) },
+            { backgroundColor: Colors.shyBlue },
+          ]}
           onPress={handleCopy}
         >
           <Copy size={20} color={Colors.lightText} />
-          <Text style={styles.actionText}>Copy</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: Colors.wittyGreen }]}
+          style={[
+            styles.actionButton,
+            { width: normalize(40), height: normalize(40) },
+            ,
+            { backgroundColor: Colors.wittyGreen },
+          ]}
           onPress={handleShare}
         >
           <Share2 size={20} color={Colors.lightText} />
-          <Text style={styles.actionText}>Share</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: Colors.flirtyPink }]}
+          style={[
+            styles.actionButton,
+            { width: normalize(40), height: normalize(40) },
+            { backgroundColor: Colors.flirtyPink },
+          ]}
           onPress={() => onDelete(line.id)}
         >
           <Trash2 size={20} color={Colors.lightText} />
-          <Text style={styles.actionText}>Delete</Text>
         </TouchableOpacity>
       </View>
     );
@@ -98,7 +107,9 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
           style={styles.container}
         >
           <View style={styles.content}>
-            <Text style={styles.lineText}>{line.text}</Text>
+            <Text variant='body' style={styles.lineText}>
+              {line.text}
+            </Text>
             <View style={styles.footer}>
               <View
                 style={[
@@ -108,17 +119,19 @@ export default function SwipeableCard({ line, onDelete }: SwipeableCardProps) {
                       line.category === "flirty"
                         ? Colors.flirtyPink
                         : line.category === "shy"
-                          ? Colors.shyBlue
-                          : Colors.wittyGreen,
+                        ? Colors.shyBlue
+                        : Colors.wittyGreen,
                   },
                 ]}
               >
-                <Text style={styles.categoryText}>
+                <Text variant='small' style={styles.categoryText}>
                   {line.category.charAt(0).toUpperCase() +
                     line.category.slice(1)}
                 </Text>
               </View>
-              <Text style={styles.dateText}>{line.createdAt}</Text>
+              <Text variant='body' style={styles.dateText}>
+                {line.createdAt}
+              </Text>
             </View>
           </View>
         </Animated.View>
@@ -143,7 +156,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   lineText: {
-    ...Fonts.body,
     color: Colors.darkText,
     marginBottom: 12,
   },
@@ -158,11 +170,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   categoryText: {
-    ...Fonts.small,
     color: Colors.lightText,
   },
   dateText: {
-    ...Fonts.small,
     color: Colors.mediumText,
   },
   rightActions: {
@@ -179,7 +189,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   actionText: {
-    ...Fonts.small,
     color: Colors.lightText,
     marginTop: 4,
   },

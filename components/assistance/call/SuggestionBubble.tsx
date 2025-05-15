@@ -1,18 +1,12 @@
 // SuggestionBubble.tsx
+import Text from "@/components/main/custom-text";
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { Suggestion, useCallAssistant } from "@/context/CallAssitantContext";
 import { normalize } from "@/utils/responsive";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Animated, Easing, StyleSheet, TouchableOpacity } from "react-native";
 // import { useCallAssistant, Suggestion } from "./CallAssistantContext";
 
 interface SuggestionBubbleProps {
@@ -89,10 +83,14 @@ export const SuggestionBubble: React.FC<SuggestionBubbleProps> = ({
         end={{ x: 1, y: 1 }}
         style={styles.gradientContainer}
       >
-        <Text style={styles.suggestionText}>{suggestion.text}</Text>
+        <Text variant='body' style={styles.suggestionText}>
+          {suggestion.text}
+        </Text>
         <TouchableOpacity style={styles.useButton} onPress={handleUse}>
           <MaterialIcons name='content-copy' size={18} color='white' />
-          <Text style={styles.useButtonText}>Use</Text>
+          <Text style={styles.useButtonText} variant='small'>
+            Use
+          </Text>
         </TouchableOpacity>
       </LinearGradient>
     </Animated.View>
@@ -105,11 +103,11 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderRadius: 16,
     overflow: "hidden",
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   gradientContainer: {
     padding: 16,
@@ -117,7 +115,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     color: Colors.white,
-    ...Fonts.body,
+
     lineHeight: 22,
     marginBottom: 10,
   },

@@ -36,17 +36,16 @@ export const globalStyles = StyleSheet.create({
     borderRadius: normalize(12),
   },
   actionButton: {
-    width: normalize(40),
-    height: normalize(40),
     borderRadius: normalize(20),
     backgroundColor: "rgba(255, 255, 255, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "row",
   },
   buttonText: {
     color: Colors.buttonText,
     fontWeight: "600",
-    ...Fonts.button,
+  
   },
 
   // Header style

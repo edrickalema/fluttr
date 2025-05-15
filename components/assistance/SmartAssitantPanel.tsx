@@ -1,5 +1,4 @@
 import { Colors } from "@/constants/colors";
-import { Fonts } from "@/constants/fonts";
 import { normalize } from "@/utils/responsive";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,13 +10,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Text from "../main/custom-text";
 
 type ToneType = "flirty" | "witty" | "sweet";
 
@@ -105,14 +104,18 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
       ]}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Fluttr Assistant</Text>
+        <Text variant='subheading' style={styles.title}>
+          Fluttr Assistant
+        </Text>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name='close' size={24} color='#333' />
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.prompt}>Paste the message you received 👇</Text>
+        <Text variant='body' style={styles.prompt}>
+          Paste the message you received 👇
+        </Text>
         <TextInput
           style={styles.input}
           value={message}
@@ -130,6 +133,7 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
             onPress={() => setSelectedTone("flirty")}
           >
             <Text
+              variant='small'
               style={[
                 styles.toneText,
                 selectedTone === "flirty" && styles.selectedToneText,
@@ -147,6 +151,7 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
             onPress={() => setSelectedTone("witty")}
           >
             <Text
+              variant='small'
               style={[
                 styles.toneText,
                 selectedTone === "witty" && styles.selectedToneText,
@@ -164,6 +169,7 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
             onPress={() => setSelectedTone("sweet")}
           >
             <Text
+              variant='small'
               style={[
                 styles.toneText,
                 selectedTone === "sweet" && styles.selectedToneText,
@@ -176,7 +182,9 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
 
         {message.length > 0 ? (
           <ScrollView style={styles.repliesContainer}>
-            <Text style={styles.repliesTitle}>Suggested Replies:</Text>
+            <Text variant='subheading' style={styles.repliesTitle}>
+              Suggested Replies:
+            </Text>
             {replies.map((reply, index) => (
               <View key={index} style={styles.replyCard}>
                 <Text style={styles.replyText}>{reply}</Text>
@@ -191,7 +199,7 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({
           </ScrollView>
         ) : (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>
+            <Text variant='body' style={styles.emptyStateText}>
               Enter your crush's message to get suggested replies
             </Text>
           </View>
@@ -232,7 +240,6 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "bold",
     color: Colors.pink,
-    ...Fonts.subheading,
   },
   closeButton: {
     padding: 5,
@@ -241,7 +248,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   prompt: {
-    ...Fonts.body,
     marginBottom: 10,
     color: "#333",
   },
@@ -253,7 +259,6 @@ const styles = StyleSheet.create({
     minHeight: normalize(80),
     marginBottom: 15,
     backgroundColor: "#F8F8F8",
-    ...Fonts.body,
   },
   toneSelector: {
     flexDirection: "row",
@@ -275,7 +280,6 @@ const styles = StyleSheet.create({
   toneText: {
     fontWeight: "500",
     color: Colors.mediumText,
-    ...Fonts.body,
   },
   selectedToneText: {
     color: Colors.white,
@@ -299,7 +303,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   replyText: {
-    ...Fonts.body,
     flex: 1,
     marginRight: 10,
   },
@@ -314,7 +317,6 @@ const styles = StyleSheet.create({
   emptyStateText: {
     color: Colors.mediumText,
     textAlign: "center",
-    ...Fonts.body,
   },
 });
 
