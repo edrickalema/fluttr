@@ -405,3 +405,30 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+
+// const styles = StyleSheet.create({
+//   btn: {
+//     justifyContent: "center",
+//     alignItems: "center",
+//     width: "90%",
+//     padding: 13,
+//     borderRadius: 10,
+//     shadowColor: "black",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.2,
+//     elevation: 10,
+//     // backgroundColor: myColors.primary,
+//     ...Platform.select({
+//       ios: {
+//         backgroundColor: PlatformColor("systemBlue"),
+//       },
+//       android: {
+//         backgroundColor: PlatformColor("@android:color/holo_green_dark"),
+//       },
+//       default: {
+//         backgroundColor: "white",
+//       },
+//     }),
+//   },
+// });
